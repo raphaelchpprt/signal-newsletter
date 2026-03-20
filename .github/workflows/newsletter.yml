@@ -27,6 +27,7 @@ jobs:
         run: npm ci
 
       - name: Generate and send newsletter
+        id: generate
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
@@ -40,3 +41,12 @@ jobs:
           git add history.json
           git diff --staged --quiet || git commit -m "chore: update history [skip ci]"
           git push
+
+      - name: Send failure alert
+        if: failure()
+        env:
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
+        run: node src/alert.js

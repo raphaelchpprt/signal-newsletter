@@ -150,7 +150,7 @@ MISE EN VALEUR — stricte :
 - ==surligné== (double égal) : exactement 1 fois dans le résumé. La phrase la plus importante.
 - Signal pour toi : 2-3 phrases. 1 **gras** + 1 ==surligné== (le takeaway actionnable).
 
-SOURCES AUTORISÉES : daily.dev, github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com.
+SOURCES AUTORISÉES : daily.dev, github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com, lemonde.fr/technologies, lemonde.fr/pixels.
 INTERDITS : sites sans auteur, SEO farms, nxcode.io, ryzlabs.com, Medium générique. Si pas de source fiable → choisir un autre sujet.
 
 FORMAT — JSON pur, aucun texte autour, aucun backtick :

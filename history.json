@@ -3,21 +3,11 @@
     "edition": 12,
     "date": "20 mars 2026",
     "titles": [
-      "OpenAI rachète Astral : uv et Ruff sous contrôle Codex",
-      "TypeScript 6.0 RC : dernier JS, premier pont vers Go",
-      "Omnibus I en vigueur : CSRD réduit de 50 000 à ~5 000 entreprises",
-      "VS Code 1.112 : debug navigateur intégré et Autopilot Copilot"
-    ]
-  },
-  {
-    "edition": 12,
-    "date": "20 mars 2026",
-    "titles": [
-      "Vite 8 est sorti : Rolldown remplace esbuild et Rollup",
-      "Next.js 16.2 : le framework se réécrit pour les agents IA",
-      "L'Omnibus CSRD entre en vigueur : ce qui change vraiment",
-      "Claude dépasse ChatGPT en part de marché business",
-      "Xiaomi révèle MiMo-V2-Pro : un modèle IA à 1 trillion de tokens traités en stealth"
+      "Next.js 16.2 : le framework se réinvente pour les agents IA",
+      "Claude Opus 4.6 : 1M tokens GA, sans surcoût, pour tous",
+      "TypeScript 7 (Project Corsa) : le compilateur Go arrive en 2026",
+      "Omnibus I en vigueur : la CSRD réduite de 80%, mais le marché continue",
+      "Xiaomi dévoile MiMo-V2-Pro : le trillion de tokens en stealth"
     ]
   }
 ]

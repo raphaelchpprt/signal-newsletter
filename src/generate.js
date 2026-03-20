@@ -163,7 +163,6 @@ FORMAT — JSON pur, sans texte ni backtick :
 {
   "edition": <semaine>,
   "date": "<date fr>",
-  "editorial": "<1 phrase, fil rouge, max 20 mots, **gras** et ==surligné== autorisés>",
   "items": [{
     "tag": "<catégorie>",
     "tagColor": "<frontend|ia|csrd|tooling|arch|geo>",
@@ -198,6 +197,8 @@ async function generateNewsletter() {
 
   const data = parseJson(textBlock.text);
 
+  data.editorial = await generateEditorial(data, client);
+
   saveHistory(data, history);
 
   await Promise.all(
@@ -207,6 +208,24 @@ async function generateNewsletter() {
   );
 
   return data;
+}
+
+async function generateEditorial(data, client) {
+  const titles = data.items.map((i) => i.title).join(' / ');
+  const res = await client.messages.create({
+    model: 'claude-sonnet-4-6',
+    max_tokens: 150,
+    messages: [
+      {
+        role: 'user',
+        content:
+          "Tu es l'assistant de Raphaël, dev front-end chez Kiosk (SaaS CSRD/ESG). Voici les sujets de sa newsletter Signal cette semaine : " +
+          titles +
+          ". Écris UNE SEULE phrase (max 20 mots) qui donne le fil rouge de la semaine. Tu peux utiliser **gras** et ==surligné==. Réponds uniquement avec la phrase, rien d'autre.",
+      },
+    ],
+  });
+  return res.content[0]?.text?.trim() || '';
 }
 
 // ─── HTML ─────────────────────────────────────────────────────────────────────

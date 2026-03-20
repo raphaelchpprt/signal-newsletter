@@ -93,62 +93,59 @@ async function generateNewsletter() {
 }
 
 const TAG_COLORS = {
-  frontend: { bg: "#EEEDFE", text: "#3C3489" },
-  ia: { bg: "#E1F5EE", text: "#085041" },
-  csrd: { bg: "#E6F1FB", text: "#0C447C" },
-  tooling: { bg: "#FAEEDA", text: "#633806" },
-  arch: { bg: "#EAF3DE", text: "#27500A" },
-  geo: { bg: "#FAECE7", text: "#712B13" },
+  frontend: { bg: "#1a1035", text: "#a78bfa", border: "#4c1d95" },
+  ia:       { bg: "#0d2818", text: "#34d399", border: "#065f46" },
+  csrd:     { bg: "#0c1a2e", text: "#60a5fa", border: "#1e3a5f" },
+  tooling:  { bg: "#1f1200", text: "#fbbf24", border: "#78350f" },
+  arch:     { bg: "#0f1f10", text: "#86efac", border: "#14532d" },
+  geo:      { bg: "#200a0a", text: "#f87171", border: "#7f1d1d" },
 };
 
 function buildClaudeLink(item, allItems, edition) {
   const context = allItems
     .map((i) => `- [${i.tag}] ${i.title} : ${i.summary} | Signal : ${i.signal}`)
     .join("\n");
-
   const prompt =
     `Voici ma newsletter Signal #${edition} de cette semaine :\n\n${context}\n\n` +
     `Je veux creuser le sujet suivant : "${item.title}"\n\n` +
     `Donne-moi une analyse approfondie avec les implications concrètes pour mon travail de dev front-end chez Kiosk (SaaS CSRD/ESG, stack Remix + React + TypeScript). ` +
     `Si pertinent, suggère des actions pratiques ou des ressources à explorer.`;
-
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 }
 
 function buildAllTopicsLink(data) {
-  const summary = data.items
-    .map((i) => `- [${i.tag}] ${i.title}`)
-    .join("\n");
-
+  const summary = data.items.map((i) => `- [${i.tag}] ${i.title}`).join("\n");
   const prompt =
     `Voici les sujets de ma newsletter Signal #${data.edition} (${data.date}) :\n\n${summary}\n\n` +
     `En tant que dev front-end chez Kiosk (SaaS CSRD/ESG, Remix + React + TypeScript + Node.js, basé à Biarritz), ` +
     `quel sujet devrais-je prioriser cette semaine et pourquoi ? Qu'est-ce qui a le plus d'impact sur mon travail ou ma veille ?`;
-
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 }
 
 function buildHtml(data) {
   const allTopicsLink = buildAllTopicsLink(data);
 
-  const itemsHtml = data.items
-    .map((item) => {
-      const colors = TAG_COLORS[item.tagColor] || TAG_COLORS.tooling;
-      const claudeLink = buildClaudeLink(item, data.items, data.edition);
-      return `
-      <div style="background:#ffffff;border:1px solid #e5e4e0;border-radius:12px;padding:20px 24px;margin-bottom:12px;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-          <span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:6px;background:${colors.bg};color:${colors.text};letter-spacing:0.05em;text-transform:uppercase;">${item.tag}</span>
+  const itemsHtml = data.items.map((item, index) => {
+    const c = TAG_COLORS[item.tagColor] || TAG_COLORS.tooling;
+    const claudeLink = buildClaudeLink(item, data.items, data.edition);
+    const number = String(index + 1).padStart(2, "0");
+    return `
+    <div style="margin-bottom:2px;background:#111113;border:1px solid #222226;border-radius:0;">
+      <div style="padding:28px 32px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+          <span style="font-family:'Courier New',monospace;font-size:10px;color:#444;letter-spacing:0.15em;">${number}</span>
+          <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;text-transform:uppercase;font-family:'Courier New',monospace;">${item.tag}</span>
         </div>
-        <p style="font-size:16px;font-weight:500;color:#1a1a1a;margin:0 0 10px;line-height:1.4;">${item.title}</p>
-        <p style="font-size:14px;color:#555;line-height:1.65;margin:0 0 12px;">${item.summary}</p>
-        <div style="background:#f7f6f3;border-left:3px solid #c8c6bf;border-radius:0 6px 6px 0;padding:10px 14px;margin-bottom:14px;">
-          <p style="font-size:13px;color:#333;margin:0;line-height:1.55;"><strong style="font-weight:500;">Signal pour toi :</strong> ${item.signal}</p>
+        <p style="font-size:17px;font-weight:600;color:#f0f0f0;margin:0 0 12px;line-height:1.35;letter-spacing:-0.02em;">${item.title}</p>
+        <p style="font-size:13.5px;color:#888;line-height:1.75;margin:0 0 20px;font-weight:400;">${item.summary}</p>
+        <div style="padding:14px 16px;background:#0d0d0f;border-left:2px solid ${c.text};border-radius:0 4px 4px 0;margin-bottom:20px;">
+          <p style="font-size:12px;color:#aaa;margin:0 0 3px;text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;">Signal</p>
+          <p style="font-size:13px;color:#ddd;margin:0;line-height:1.6;">${item.signal}</p>
         </div>
-        <a href="${claudeLink}" style="display:inline-block;font-size:12px;font-weight:500;color:#3C3489;background:#EEEDFE;border-radius:6px;padding:5px 12px;text-decoration:none;">Creuser avec Claude →</a>
-      </div>`;
-    })
-    .join("");
+        <a href="${claudeLink}" style="display:inline-block;font-size:11px;font-weight:600;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:6px 14px;text-decoration:none;letter-spacing:0.08em;font-family:'Courier New',monospace;text-transform:uppercase;">Creuser →</a>
+      </div>
+    </div>`;
+  }).join("\n");
 
   return `<!DOCTYPE html>
 <html lang="fr">
@@ -157,34 +154,53 @@ function buildHtml(data) {
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Signal #${data.edition}</title>
 </head>
-<body style="margin:0;padding:0;background:#f0efe9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <div style="max-width:640px;margin:32px auto;padding:0 16px 48px;">
+<body style="margin:0;padding:0;background:#0a0a0b;">
+  <div style="max-width:620px;margin:0 auto;padding:40px 16px 60px;">
 
-    <div style="border-bottom:1px solid #dddcd7;padding-bottom:20px;margin-bottom:24px;display:flex;justify-content:space-between;align-items:flex-end;">
-      <div>
-        <p style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase;color:#888;margin:0 0 4px;">Veille tech personnalisée</p>
-        <p style="font-size:24px;font-weight:500;color:#1a1a1a;margin:0;">Signal <span style="color:#999;font-weight:400;">#${data.edition}</span></p>
-      </div>
-      <div style="text-align:right;">
-        <p style="font-size:12px;color:#999;margin:0;">${data.date}</p>
-        <p style="font-size:12px;color:#999;margin:4px 0 0;">${data.items.length} sujets · ~5 min</p>
+    <!-- Header -->
+    <div style="padding:32px 0 28px;border-bottom:1px solid #1e1e22;margin-bottom:4px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <p style="font-family:'Courier New',monospace;font-size:10px;letter-spacing:0.2em;text-transform:uppercase;color:#444;margin:0 0 8px;">Veille tech · Raphaël</p>
+          <p style="font-size:28px;font-weight:700;color:#f5f5f5;margin:0;letter-spacing:-0.04em;">SIGNAL<span style="color:#444;font-weight:300;"> #${data.edition}</span></p>
+        </div>
+        <div style="text-align:right;padding-top:4px;">
+          <p style="font-family:'Courier New',monospace;font-size:10px;color:#444;margin:0 0 4px;letter-spacing:0.05em;">${data.date}</p>
+          <p style="font-family:'Courier New',monospace;font-size:10px;color:#333;margin:0;letter-spacing:0.05em;">${data.items.length} ITEMS</p>
+        </div>
       </div>
     </div>
 
-    ${itemsHtml}
+    <!-- Divider line -->
+    <div style="height:1px;background:linear-gradient(90deg,#6366f1 0%,#8b5cf6 30%,#ec4899 60%,#0ea5e9 100%);margin-bottom:4px;"></div>
 
-    <div style="border-top:1px solid #dddcd7;margin-top:24px;padding-top:20px;text-align:center;">
-      <a href="${allTopicsLink}" style="display:inline-block;font-size:13px;font-weight:500;color:#ffffff;background:#2C2C2A;border-radius:8px;padding:10px 20px;text-decoration:none;margin-bottom:16px;">Discuter de cette édition avec Claude →</a>
-      <p style="font-size:12px;color:#aaa;margin:0;">Signal · Édition #${data.edition} · Généré automatiquement pour Raphaël</p>
+    <!-- Items -->
+    <div style="border:1px solid #222226;border-radius:6px;overflow:hidden;margin-bottom:4px;">
+      ${itemsHtml}
     </div>
+
+    <!-- CTA -->
+    <div style="background:#111113;border:1px solid #222226;border-radius:6px;padding:24px 32px;text-align:center;">
+      <p style="font-family:'Courier New',monospace;font-size:10px;color:#444;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 16px;">Aller plus loin</p>
+      <a href="${allTopicsLink}" style="display:inline-block;font-size:12px;font-weight:700;color:#0a0a0b;background:#f0f0f0;border-radius:3px;padding:12px 28px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;font-family:'Courier New',monospace;">Discuter avec Claude →</a>
+    </div>
+
+    <!-- Footer -->
+    <div style="padding-top:24px;text-align:center;">
+      <p style="font-family:'Courier New',monospace;font-size:10px;color:#2a2a2e;margin:0;letter-spacing:0.1em;">SIGNAL · ÉDITION #${data.edition} · AUTO-GÉNÉRÉ</p>
+    </div>
+
   </div>
 </body>
 </html>`;
 }
 
+
 async function sendEmail(html, edition) {
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    host: "ssl0.ovh.net",
+    port: 465,
+    secure: true,
     auth: {
       user: SENDER_EMAIL,
       pass: SENDER_PASSWORD,

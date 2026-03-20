@@ -86,7 +86,7 @@ async function generateNewsletter() {
   const weekNum = getWeekNumber();
 
   const response = await client.messages.create({
-    model: "claude-opus-4-5",
+    model: "claude-sonnet-4-6",
     max_tokens: 4000,
     tools: [{ type: "web_search_20250305", name: "web_search" }],
     system: SYSTEM_PROMPT,
@@ -142,10 +142,10 @@ function buildAllTopicsLink(data) {
 function buildSourcesHtml(sources, accentColor) {
   if (!sources || sources.length === 0) return "";
   const links = sources
-    .map(
-      (s) =>
-        `<a href="${s.url}" style="display:inline-block;font-size:10px;color:${accentColor};font-family:'Courier New',monospace;letter-spacing:0.05em;text-decoration:none;border-bottom:1px solid ${accentColor}33;margin-right:12px;">${s.label} ↗</a>`
-    )
+    .map((s) => {
+      const dateStr = s.date ? ` <span style="color:#666;font-size:9px;margin-left:3px;">${s.date}</span>` : "";
+      return `<a href="${s.url}" style="display:inline-block;font-size:10px;color:${accentColor};font-family:'Courier New',monospace;letter-spacing:0.05em;text-decoration:none;border-bottom:1px solid ${accentColor}55;margin-right:16px;padding-bottom:1px;">${s.label} ↗${dateStr}</a>`;
+    })
     .join("");
   return `<div style="margin-bottom:16px;">${links}</div>`;
 }
@@ -162,15 +162,15 @@ function buildHtml(data) {
     <div style="margin-bottom:2px;background:#111113;border:1px solid #222226;">
       <div style="padding:28px 32px;">
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-          <span style="font-family:'Courier New',monospace;font-size:10px;color:#444;letter-spacing:0.15em;">${number}</span>
+          <span style="font-family:'Courier New',monospace;font-size:10px;color:#555;letter-spacing:0.15em;">${number}</span>
           <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;text-transform:uppercase;font-family:'Courier New',monospace;">${item.tag}</span>
         </div>
         <p style="font-size:17px;font-weight:600;color:#f0f0f0;margin:0 0 12px;line-height:1.35;letter-spacing:-0.02em;">${item.title}</p>
-        <p style="font-size:13.5px;color:#888;line-height:1.75;margin:0 0 16px;font-weight:400;">${item.summary}</p>
+        <p style="font-size:13.5px;color:#999;line-height:1.75;margin:0 0 16px;font-weight:400;">${item.summary}</p>
         ${sourcesHtml}
         <div style="padding:14px 16px;background:#0d0d0f;border-left:2px solid ${c.text};border-radius:0 4px 4px 0;margin-bottom:20px;">
-          <p style="font-size:12px;color:#555;margin:0 0 3px;text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;">Signal</p>
-          <p style="font-size:13px;color:#ddd;margin:0;line-height:1.6;">${item.signal}</p>
+          <p style="font-size:12px;color:#777;margin:0 0 3px;text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;">Signal</p>
+          <p style="font-size:13px;color:#e8e8e8;margin:0;line-height:1.6;">${item.signal}</p>
         </div>
         <a href="${claudeLink}" style="display:inline-block;font-size:11px;font-weight:600;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:6px 14px;text-decoration:none;letter-spacing:0.08em;font-family:'Courier New',monospace;text-transform:uppercase;">Creuser →</a>
       </div>
@@ -203,8 +203,8 @@ function buildHtml(data) {
           <p style="font-size:28px;font-weight:700;color:#f5f5f5;margin:0;letter-spacing:-0.04em;">SIGNAL<span style="color:#444;font-weight:300;"> #${data.edition}</span></p>
         </div>
         <div style="text-align:right;padding-top:4px;">
-          <p style="font-family:'Courier New',monospace;font-size:10px;color:#444;margin:0 0 4px;letter-spacing:0.05em;">${data.date}</p>
-          <p style="font-family:'Courier New',monospace;font-size:10px;color:#333;margin:0;letter-spacing:0.05em;">${data.items.length} ITEMS</p>
+          <p style="font-family:'Courier New',monospace;font-size:10px;color:#444;margin:0 0 4px;letter-spacing:0.05em;color:#666;">${data.date}</p>
+          <p style="font-family:'Courier New',monospace;font-size:10px;color:#555;margin:0;letter-spacing:0.05em;">${data.items.length} ITEMS</p>
         </div>
       </div>
     </div>
@@ -216,7 +216,7 @@ function buildHtml(data) {
     </div>
 
     <div style="background:#111113;border:1px solid #222226;border-radius:6px;padding:24px 32px;text-align:center;">
-      <p style="font-family:'Courier New',monospace;font-size:10px;color:#444;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 16px;">Aller plus loin</p>
+      <p style="font-family:'Courier New',monospace;font-size:10px;color:#666;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 16px;">Aller plus loin</p>
       <a href="${allTopicsLink}" style="display:inline-block;font-size:12px;font-weight:700;color:#0a0a0b;background:#f0f0f0;border-radius:3px;padding:12px 28px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;font-family:'Courier New',monospace;">Discuter avec Claude →</a>
     </div>
 

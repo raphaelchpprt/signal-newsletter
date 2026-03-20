@@ -1,5 +1,15 @@
 [
   {
+    "edition": 12,
+    "date": "20 mars 2026",
+    "titles": [
+      "Vite 8 sort avec Rolldown : des builds 10 à 30× plus rapides",
+      "Claude reçoit la mémoire persistante pour tous — et un outil d'import ChatGPT",
+      "EFRAG lance l'ESRS interactif : 61 % de datapoints en moins, le chantier data commence",
+      "NVIDIA GTC : OpenShell veut devenir l'OS de sécurité des agents autonomes"
+    ]
+  },
+  {
     "edition": 13,
     "date": "20 mars 2026",
     "titles": [

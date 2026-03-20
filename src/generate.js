@@ -74,7 +74,7 @@ function parseJson(raw) {
 
 // ─── Prompt ───────────────────────────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `Tu es l'assistant de veille tech de Raphaël Chauvet, développeur fullstack front-end chez Kiosk (meetkiosk.com), plateforme B2B SaaS de conformité CSRD/ESG. Basé à Biarritz, remote.
+const SYSTEM_PROMPT = `Tu es l'assistant de veille tech de Raphaël, développeur fullstack front-end chez Kiosk (meetkiosk.com), plateforme B2B SaaS de conformité CSRD/ESG. Basé à Biarritz, remote.
 
 Stack : Remix, React, TypeScript, Node.js. Outils : Linear, Slack, Claude Code, Cursor.
 Intérêts : écosystème JS/TS, outils IA pour devs, architecture web, CSRD/ESG, éthique IA, géopolitique tech.
@@ -88,13 +88,14 @@ MISE EN VALEUR — stricte :
 - ==surligné== (double égal) : exactement 1 fois dans le résumé. La phrase la plus importante.
 - Signal pour toi : 2-3 phrases. 1 **gras** + 1 ==surligné== (le takeaway actionnable).
 
-SOURCES AUTORISÉES : github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com.
+SOURCES AUTORISÉES : daily.dev, github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com.
 INTERDITS : sites sans auteur, SEO farms, nxcode.io, ryzlabs.com, Medium générique. Si pas de source fiable → choisir un autre sujet.
 
 FORMAT — JSON pur, aucun texte autour, aucun backtick :
 {
   "edition": <semaine>,
   "date": "<date en français>",
+  "editorial": "<2-3 phrases ton direct, pas corporate. Donne le fil rouge de la semaine — ce qui relie les sujets, ou ce qui rend cette semaine notable. Peut inclure **gras** et ==surligné== selon les mêmes règles.>",
   "items": [{
     "tag": "<catégorie courte>",
     "tagColor": "<frontend|ia|csrd|tooling|arch|geo>",
@@ -196,6 +197,7 @@ function buildHtml(data) {
   <style>:root{color-scheme:dark;}body{background-color:#0a0a0b!important;color:#f0f0f0!important;}</style>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0b;">
+  <span style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${data.items.slice(0,3).map(i => i.title).join(" · ")} — Ta veille tech de la semaine.</span>
   <div style="max-width:620px;margin:0 auto;padding:40px 16px 60px;background:#0a0a0b;">
 
     <div style="padding:32px 0 28px;border-bottom:1px solid #1e1e22;margin-bottom:4px;">
@@ -213,6 +215,10 @@ function buildHtml(data) {
 
     <div style="height:1px;background:linear-gradient(90deg,#6366f1,#8b5cf6 30%,#ec4899 60%,#0ea5e9);margin-bottom:4px;"></div>
 
+    ${data.editorial ? `<div style="padding:20px 24px;background:#111113;border:1px solid #222226;border-radius:6px;margin-bottom:4px;">
+      <p style="font-family:'Courier New',monospace;font-size:10px;color:#555;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 10px;">Cette semaine</p>
+      <p style="font-size:14px;color:#bbb;line-height:1.75;margin:0;">${renderMarkup(data.editorial, "#a78bfa", "#1a1035")}</p>
+    </div>` : ""}
     <div style="border:1px solid #222226;border-radius:6px;overflow:hidden;margin-bottom:4px;">${itemsHtml}</div>
 
     <div style="background:#111113;border:1px solid #222226;border-radius:6px;padding:24px 32px;text-align:center;">

@@ -2,6 +2,12 @@ import Anthropic from "@anthropic-ai/sdk";
 import nodemailer from "nodemailer";
 import https from "https";
 import http from "http";
+import { readFileSync, writeFileSync } from "fs";
+import { resolve, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const HISTORY_PATH = resolve(__dirname, "../history.json");
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -18,6 +24,34 @@ const TAG_COLORS = {
   arch:     { bg: "#0f1f10", text: "#86efac", border: "#14532d" },
   geo:      { bg: "#200a0a", text: "#f87171", border: "#7f1d1d" },
 };
+
+// ─── History ─────────────────────────────────────────────────────────────────
+
+function loadHistory() {
+  try {
+    return JSON.parse(readFileSync(HISTORY_PATH, "utf8"));
+  } catch {
+    return [];
+  }
+}
+
+function saveHistory(data, history) {
+  const entry = {
+    edition: data.edition,
+    date: data.date,
+    titles: data.items.map((i) => i.title),
+  };
+  const updated = [entry, ...history].slice(0, 8); // keep last 8 weeks
+  writeFileSync(HISTORY_PATH, JSON.stringify(updated, null, 2));
+}
+
+function historyContext(history) {
+  if (!history.length) return "";
+  const lines = history.map((h) =>
+    `- Edition #${h.edition} (${h.date}) : ${h.titles.join(" / ")}`
+  ).join("\n");
+  return "\nEditions precedentes (evite les memes sujets, fais des references si pertinent) :\n" + lines + "\n";
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -110,6 +144,7 @@ FORMAT — JSON pur, aucun texte autour, aucun backtick :
 // ─── Claude API ───────────────────────────────────────────────────────────────
 
 async function generateNewsletter() {
+  const history = loadHistory();
   const client = new Anthropic({ apiKey: ANTHROPIC_KEY });
   console.log("Calling Claude with web search...");
 
@@ -120,7 +155,7 @@ async function generateNewsletter() {
     system: SYSTEM_PROMPT,
     messages: [{
       role: "user",
-      content: `Génère l'édition #${weekNumber()} de Signal pour le ${frenchDate()}. Actus des 7 derniers jours uniquement. IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après.`,
+      content: `Génère l'édition #${weekNumber()} de Signal pour le ${frenchDate()}. Actus des 7 derniers jours uniquement.${historyContext(history)} IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après.`,
     }],
   });
 
@@ -128,6 +163,8 @@ async function generateNewsletter() {
   if (!textBlock) throw new Error("No text block in response");
 
   const data = parseJson(textBlock.text);
+
+  saveHistory(data, history);
 
   await Promise.all(data.items.map(async (item) => {
     item.imageUrl = await verifyImage(item.imageUrl);

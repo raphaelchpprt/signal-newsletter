@@ -125,12 +125,19 @@ function parseJson(raw) {
   const cleaned = raw
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
+    .replace(/‘|’/g, "'") // curly apostrophes
+    .replace(/“|”/g, '"') // curly quotes
     .trim();
   const extracted = (cleaned.match(/\{[\s\S]*\}/) || [])[0] || cleaned;
   try {
     return JSON.parse(extracted);
   } catch {
-    return JSON.parse(extracted.replace(/[\r\n\t]/g, ' '));
+    try {
+      return JSON.parse(extracted.replace(/[\r\n\t]/g, ' '));
+    } catch (e) {
+      console.error('Raw JSON (500 chars):', extracted.substring(0, 500));
+      throw e;
+    }
   }
 }
 
@@ -259,7 +266,7 @@ function buildHtml(data) {
           <p style="font-size:14px;font-weight:400;color:${c.text};margin:0 0 8px;font-family:'JetBrains Mono',monospace;">signal</p>
           <p style="font-size:13.5px;color:#ccc;margin:0;line-height:1.65;font-family:'Golos Text',sans-serif;">${renderMarkup(item.signal, c.text, c.bg)}</p>
         </div>
-        <a href="${claudeDeepLink(item, data.items, data.edition)}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;>creuser avec claude →</a>
+        <a href="${claudeDeepLink(item, data.items, data.edition)}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;">creuser avec claude →</a>
       </div>
     </div>`;
     })

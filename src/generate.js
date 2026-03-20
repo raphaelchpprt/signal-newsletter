@@ -1,5 +1,30 @@
 import Anthropic from "@anthropic-ai/sdk";
 import nodemailer from "nodemailer";
+import https from "https";
+import http from "http";
+
+async function checkImageUrl(url) {
+  if (!url) return null;
+  try {
+    const parsed = new URL(url);
+    const lib = parsed.protocol === "https:" ? https : http;
+    return await new Promise((resolve) => {
+      const req = lib.request(
+        { method: "HEAD", hostname: parsed.hostname, path: parsed.pathname + parsed.search, timeout: 3000 },
+        (res) => {
+          const ok = res.statusCode >= 200 && res.statusCode < 400;
+          const isImage = (res.headers["content-type"] || "").startsWith("image/");
+          resolve(ok && isImage ? url : null);
+        }
+      );
+      req.on("error", () => resolve(null));
+      req.on("timeout", () => { req.destroy(); resolve(null); });
+      req.end();
+    });
+  } catch {
+    return null;
+  }
+}
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -126,7 +151,16 @@ async function generateNewsletter() {
     jsonText = jsonMatch[0];
   }
 
-  return JSON.parse(jsonText);
+  const data = JSON.parse(jsonText);
+
+  // Verify images are reachable
+  await Promise.all(
+    data.items.map(async (item) => {
+      item.imageUrl = await checkImageUrl(item.imageUrl);
+    })
+  );
+
+  return data;
 }
 
 const TAG_COLORS = {

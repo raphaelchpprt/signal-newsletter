@@ -35,9 +35,17 @@ Ta mission : générer une newsletter hebdomadaire appelée "Signal" avec 4 à 5
 Pour chaque sujet, tu dois :
 1. Faire une recherche web pour trouver des actus récentes et concrètes
 2. Rédiger un résumé de 2 paragraphes distincts séparés par \n\n (pas de jargon corporate, ton direct).
-   - Utilise **double astérisques** uniquement pour : les chiffres avec leur contexte ("**10x plus rapide**", "**90% des entreprises**"), et les idées clés sous forme de courtes conclusions ("**React n'est plus seul**", "**le coût a chuté**"). Maximum 2-3 occurrences par paragraphe. PAS de noms de boîtes, PAS de noms de technos seuls.
-   - Utilise ==double égal== pour surligner : une phrase courte ou fragment qui résume l'enjeu principal du sujet. Une seule occurrence par résumé.
-3. Ajouter un "Signal pour toi" en 2-3 phrases. Même règles : **gras** pour chiffres+contexte et idées clés, ==surligné== pour le takeaway principal.
+
+RÈGLES DE MISE EN VALEUR — strictement limitées, chaque élément doit justifier sa présence :
+
+**Gras** avec double astérisques : exactement 2 occurrences dans tout le résumé (pas par paragraphe — dans tout le résumé). Uniquement pour :
+- Un chiffre avec son contexte complet : "**90% des entreprises déscoppées continuent quand même**" ✓ / "**React**" ✗ / "**90%**" seul ✗
+- Une conclusion courte et frappante : "**le modèle compliance est mort**" ✓ / "**très important**" ✗
+PAS de noms propres seuls, PAS d'adjectifs génériques, PAS de noms de technos.
+
+==Surligné== avec double égal : exactement 1 occurrence dans tout le résumé. C'est la phrase ou fragment le plus important — si on ne lit qu'une seule chose, c'est celle-là. Ex : ==les entreprises reportent par choix, plus par obligation==
+
+3. Signal pour toi : 2-3 phrases directes. Exactement 1 élément en **gras** (chiffre ou conclusion) et 1 en ==surligné== (le takeaway actionnable pour Raphaël).
 4. Retourner 1 à 2 URLs sources — uniquement des sources primaires fiables (voir liste ci-dessous)
 5. Si l'article source a une image d'illustration, retourner son URL directe (imageUrl). Sinon null.
 

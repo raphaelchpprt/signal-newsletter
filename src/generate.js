@@ -3,7 +3,43 @@ import nodemailer from "nodemailer";
 import https from "https";
 import http from "http";
 
-async function checkImageUrl(url) {
+// ─── Config ───────────────────────────────────────────────────────────────────
+
+const RECIPIENT     = "hi@raphaelch.me";
+const SENDER_EMAIL  = process.env.SENDER_EMAIL;
+const SENDER_PASS   = process.env.SENDER_PASSWORD;
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+
+const TAG_COLORS = {
+  frontend: { bg: "#1a1035", text: "#a78bfa", border: "#4c1d95" },
+  ia:       { bg: "#0d2818", text: "#34d399", border: "#065f46" },
+  csrd:     { bg: "#0c1a2e", text: "#60a5fa", border: "#1e3a5f" },
+  tooling:  { bg: "#1f1200", text: "#fbbf24", border: "#78350f" },
+  arch:     { bg: "#0f1f10", text: "#86efac", border: "#14532d" },
+  geo:      { bg: "#200a0a", text: "#f87171", border: "#7f1d1d" },
+};
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function weekNumber() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 1);
+  return Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
+}
+
+function frenchDate() {
+  return new Date().toLocaleDateString("fr-FR", {
+    weekday: "long", day: "numeric", month: "long", year: "numeric",
+  });
+}
+
+function renderMarkup(text, color, bgColor) {
+  return (text || "")
+    .replace(/==(.+?)==/g, `<mark style="background:${bgColor};color:${color};padding:1px 5px;border-radius:2px;">$1</mark>`)
+    .replace(/\*\*(.+?)\*\*/g, `<strong style="color:#f0f0f0;font-weight:600;">$1</strong>`);
+}
+
+async function verifyImage(url) {
   if (!url) return null;
   try {
     const parsed = new URL(url);
@@ -13,8 +49,8 @@ async function checkImageUrl(url) {
         { method: "HEAD", hostname: parsed.hostname, path: parsed.pathname + parsed.search, timeout: 3000 },
         (res) => {
           const ok = res.statusCode >= 200 && res.statusCode < 400;
-          const isImage = (res.headers["content-type"] || "").startsWith("image/");
-          resolve(ok && isImage ? url : null);
+          const isImg = (res.headers["content-type"] || "").startsWith("image/");
+          resolve(ok && isImg ? url : null);
         }
       );
       req.on("error", () => resolve(null));
@@ -26,259 +62,140 @@ async function checkImageUrl(url) {
   }
 }
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-
-const RECIPIENT = "hi@raphaelch.me";
-const SENDER_EMAIL = process.env.SENDER_EMAIL;
-const SENDER_PASSWORD = process.env.SENDER_PASSWORD;
-
-function getWeekNumber() {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 1);
-  return Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
+function parseJson(raw) {
+  const cleaned = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  const extracted = (cleaned.match(/\{[\s\S]*\}/) || [])[0] || cleaned;
+  try {
+    return JSON.parse(extracted);
+  } catch {
+    return JSON.parse(extracted.replace(/[\r\n\t]/g, " "));
+  }
 }
 
-function formatDate() {
-  return new Date().toLocaleDateString("fr-FR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-}
+// ─── Prompt ───────────────────────────────────────────────────────────────────
 
-const SYSTEM_PROMPT = `Tu es l'assistant de veille tech de Raphaël Chauvet, développeur fullstack front-end chez Kiosk (meetkiosk.com), une plateforme B2B SaaS de conformité CSRD et collecte de données ESG. Il est basé à Biarritz, travaille en remote.
+const SYSTEM_PROMPT = `Tu es l'assistant de veille tech de Raphaël Chauvet, développeur fullstack front-end chez Kiosk (meetkiosk.com), plateforme B2B SaaS de conformité CSRD/ESG. Basé à Biarritz, remote.
 
-Son stack : Remix, React, TypeScript, Node.js.
-Ses outils quotidiens : Linear, Slack, Notion, Claude Code, Cursor.
-Ses centres d'intérêt tech : écosystème JS/TS, outils IA pour devs, architecture web, tooling front-end.
-Son contexte métier : CSRD, ESG, SaaS B2B européen, réglementation EU.
-Ses intérêts plus larges : éthique IA, géopolitique tech, régulation EU.
+Stack : Remix, React, TypeScript, Node.js. Outils : Linear, Slack, Claude Code, Cursor.
+Intérêts : écosystème JS/TS, outils IA pour devs, architecture web, CSRD/ESG, éthique IA, géopolitique tech.
 
-Ta mission : générer une newsletter hebdomadaire appelée "Signal" avec 4 à 5 sujets pertinents pour lui.
+MISSION : newsletter hebdomadaire "Signal", 4-5 sujets. Pour chaque sujet :
+1. Recherche web — actus des 7 derniers jours uniquement
+2. Résumé 2 paragraphes (\\n\\n entre les deux), ton direct, sans jargon
 
-Pour chaque sujet, tu dois :
-1. Faire une recherche web pour trouver des actus récentes et concrètes
-2. Rédiger un résumé de 2 paragraphes distincts séparés par \n\n (pas de jargon corporate, ton direct).
+MISE EN VALEUR — stricte :
+- **gras** (double astérisques) : exactement 2 fois dans le résumé. Uniquement chiffre+contexte ("**90% des entreprises continuent quand même**") ou conclusion frappante ("**le modèle compliance est mort**"). PAS de noms propres seuls.
+- ==surligné== (double égal) : exactement 1 fois dans le résumé. La phrase la plus importante.
+- Signal pour toi : 2-3 phrases. 1 **gras** + 1 ==surligné== (le takeaway actionnable).
 
-RÈGLES DE MISE EN VALEUR — strictement limitées, chaque élément doit justifier sa présence :
+SOURCES AUTORISÉES : github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com.
+INTERDITS : sites sans auteur, SEO farms, nxcode.io, ryzlabs.com, Medium générique. Si pas de source fiable → choisir un autre sujet.
 
-**Gras** avec double astérisques : exactement 2 occurrences dans tout le résumé (pas par paragraphe — dans tout le résumé). Uniquement pour :
-- Un chiffre avec son contexte complet : "**90% des entreprises déscoppées continuent quand même**" ✓ / "**React**" ✗ / "**90%**" seul ✗
-- Une conclusion courte et frappante : "**le modèle compliance est mort**" ✓ / "**très important**" ✗
-PAS de noms propres seuls, PAS d'adjectifs génériques, PAS de noms de technos.
-
-==Surligné== avec double égal : exactement 1 occurrence dans tout le résumé. C'est la phrase ou fragment le plus important — si on ne lit qu'une seule chose, c'est celle-là. Ex : ==les entreprises reportent par choix, plus par obligation==
-
-3. Signal pour toi : 2-3 phrases directes. Exactement 1 élément en **gras** (chiffre ou conclusion) et 1 en ==surligné== (le takeaway actionnable pour Raphaël).
-4. Retourner 1 à 2 URLs sources — uniquement des sources primaires fiables (voir liste ci-dessous)
-5. Si l'article source a une image d'illustration, retourner son URL directe (imageUrl). Sinon null.
-
-SOURCES AUTORISÉES (privilégier dans cet ordre) :
-- Annonces officielles : github.com/blog, devblogs.microsoft.com, blog.angular.io, react.dev/blog, remix.run/blog, nodejs.org/en/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog
-- Tech fiable : thenewstack.io, changelog.com, css-tricks.com, smashingmagazine.com, web.dev, developer.chrome.com, webkit.org/blog
-- IA/ML : anthropic.com/news, openai.com/blog, huggingface.co/blog, simonwillison.net
-- ESG/CSRD : esgtoday.com, esgnews.com, responsible-investor.com, consilium.europa.eu, eur-lex.europa.eu, efrag.org
-- Presse tech sérieuse : techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com
-
-SOURCES INTERDITES :
-- Sites de contenu généré par IA (articles sans auteur identifié, SEO farms)
-- Medium sauf publications officielles d'entreprises
-- Sites avec des titres clickbait ou du contenu clairement synthétisé
-- Toute URL qui ne charge pas ou qui redirige vers une page d'erreur
-- nxcode.io, ryzlabs.com, programming-helper.com et autres agrégateurs IA
-
-Si tu ne trouves pas de source fiable sur un sujet, choisis un autre sujet pour lequel tu as une vraie source.
-
-Thèmes à couvrir chaque semaine (équilibrer) :
-- Écosystème JS/TS (Remix, React, Node, Vite, tooling)
-- Outils IA pour devs (Claude Code, Cursor, Copilot, nouveaux modèles)
-- CSRD / ESG tech (marché, réglementation EU, concurrents, tendances)
-- Web performance / architecture (patterns, runtimes, déploiement)
-- Optionnel : éthique IA ou géopolitique tech si actu notable
-
-Format de réponse : JSON uniquement, sans markdown ni backticks, selon ce schéma exact :
+FORMAT — JSON pur, aucun texte autour, aucun backtick :
 {
-  "edition": <numéro de semaine>,
+  "edition": <semaine>,
   "date": "<date en français>",
-  "items": [
-    {
-      "tag": "<catégorie courte>",
-      "tagColor": "<une valeur parmi: frontend, ia, csrd, tooling, arch, geo>",
-      "title": "<titre accrocheur, max 12 mots>",
-      "summary": "<résumé factuel, 3-4 phrases, ton direct>",
-      "signal": "<ce que ça implique concrètement pour Raphaël>",
-      "imageUrl": "<url directe vers une image de l'article source, ou null si pas d'image disponible>",
-      "sources": [
-        { "label": "<nom court de la source>", "url": "<url complète>", "date": "<date de publication ex: 18 mars 2026>" }
-      ]
-    }
-  ]
+  "items": [{
+    "tag": "<catégorie courte>",
+    "tagColor": "<frontend|ia|csrd|tooling|arch|geo>",
+    "title": "<titre, max 12 mots>",
+    "summary": "<2 paragraphes séparés par \\n\\n avec **gras** et ==surligné==>",
+    "signal": "<2-3 phrases avec 1 **gras** et 1 ==surligné==>",
+    "imageUrl": "<url image article ou null>",
+    "sources": [{ "label": "<nom source>", "url": "<url>", "date": "<ex: 18 mars 2026>" }]
+  }]
 }`;
 
-async function generateNewsletter() {
-  console.log("Generating newsletter with web search...");
+// ─── Claude API ───────────────────────────────────────────────────────────────
 
-  const today = formatDate();
-  const weekNum = getWeekNumber();
+async function generateNewsletter() {
+  const client = new Anthropic({ apiKey: ANTHROPIC_KEY });
+  console.log("Calling Claude with web search...");
 
   const response = await client.messages.create({
     model: "claude-sonnet-4-6",
     max_tokens: 4000,
     tools: [{ type: "web_search_20250305", name: "web_search" }],
     system: SYSTEM_PROMPT,
-    messages: [
-      {
-        role: "user",
-        content: `Génère l'édition #${weekNum} de Signal pour le ${today}. Fais des recherches web sur les actus des 7 derniers jours uniquement. Ignore tout ce qui est plus vieux que 7 jours. Retourne uniquement le JSON, sans texte autour.`,
-      },
-    ],
+    messages: [{
+      role: "user",
+      content: `Génère l'édition #${weekNumber()} de Signal pour le ${frenchDate()}. Actus des 7 derniers jours uniquement. IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après.`,
+    }],
   });
 
-  let jsonText = "";
-  for (const block of response.content) {
-    if (block.type === "text") {
-      jsonText = block.text;
-    }
-  }
+  const textBlock = response.content.filter((b) => b.type === "text").pop();
+  if (!textBlock) throw new Error("No text block in response");
 
-  // Strip markdown fences and any leading/trailing text
-  jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  const data = parseJson(textBlock.text);
 
-  // Extract JSON object if wrapped in extra text
-  const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
-  if (jsonMatch) {
-    jsonText = jsonMatch[0];
-  }
-
-  const data = JSON.parse(jsonText);
-
-  // Verify images are reachable
-  await Promise.all(
-    data.items.map(async (item) => {
-      item.imageUrl = await checkImageUrl(item.imageUrl);
-    })
-  );
+  await Promise.all(data.items.map(async (item) => {
+    item.imageUrl = await verifyImage(item.imageUrl);
+  }));
 
   return data;
 }
 
-const TAG_COLORS = {
-  frontend: { bg: "#1a1035", text: "#a78bfa", border: "#4c1d95" },
-  ia:       { bg: "#0d2818", text: "#34d399", border: "#065f46" },
-  csrd:     { bg: "#0c1a2e", text: "#60a5fa", border: "#1e3a5f" },
-  tooling:  { bg: "#1f1200", text: "#fbbf24", border: "#78350f" },
-  arch:     { bg: "#0f1f10", text: "#86efac", border: "#14532d" },
-  geo:      { bg: "#200a0a", text: "#f87171", border: "#7f1d1d" },
-};
+// ─── HTML ─────────────────────────────────────────────────────────────────────
 
-function buildClaudeLink(item, allItems, edition) {
-  const context = allItems
-    .map((i) => `- [${i.tag}] ${i.title} : ${i.summary} | Signal : ${i.signal}`)
-    .join("\n");
-  const prompt =
-    `Voici ma newsletter Signal #${edition} de cette semaine :\n\n${context}\n\n` +
-    `Je veux creuser le sujet suivant : "${item.title}"\n\n` +
-    `Donne-moi une analyse approfondie avec les implications concrètes pour mon travail de dev front-end chez Kiosk (SaaS CSRD/ESG, stack Remix + React + TypeScript). ` +
-    `Si pertinent, suggère des actions pratiques ou des ressources à explorer.`;
+function claudeDeepLink(item, allItems, edition) {
+  const context = allItems.map((i) => `- [${i.tag}] ${i.title} : ${i.summary} | Signal : ${i.signal}`).join("\n");
+  const prompt = `Newsletter Signal #${edition} :\n\n${context}\n\nCreuse ce sujet : "${item.title}"\n\nAnalyse + implications concrètes pour dev front-end chez Kiosk (Remix + React + TypeScript, SaaS CSRD/ESG).`;
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 }
 
-function buildAllTopicsLink(data) {
+function allTopicsLink(data) {
   const summary = data.items.map((i) => `- [${i.tag}] ${i.title}`).join("\n");
-  const prompt =
-    `Voici les sujets de ma newsletter Signal #${data.edition} (${data.date}) :\n\n${summary}\n\n` +
-    `En tant que dev front-end chez Kiosk (SaaS CSRD/ESG, Remix + React + TypeScript + Node.js, basé à Biarritz), ` +
-    `quel sujet devrais-je prioriser cette semaine et pourquoi ? Qu'est-ce qui a le plus d'impact sur mon travail ou ma veille ?`;
+  const prompt = `Signal #${data.edition} (${data.date}) :\n\n${summary}\n\nEn tant que dev front-end chez Kiosk (Remix + React + TypeScript, SaaS CSRD/ESG), quel sujet prioriser cette semaine ?`;
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
-}
-
-function buildSourcesHtml(sources, accentColor) {
-  if (!sources || sources.length === 0) return "";
-  const links = sources
-    .map((s) => {
-      const dateStr = s.date ? ` <span style="color:#555;font-size:11px;margin-left:5px;">${s.date}</span>` : "";
-      return `<a href="${s.url}" style="display:inline-block;font-size:12px;color:${accentColor};font-family:'Courier New',monospace;letter-spacing:0.04em;text-decoration:none;border-bottom:1px solid ${accentColor}66;margin-right:20px;padding-bottom:2px;">${s.label} ↗${dateStr}</a>`;
-    })
-    .join("");
-  return `<div style="margin-bottom:20px;">${links}</div>`;
 }
 
 function buildHtml(data) {
-  const allTopicsLink = buildAllTopicsLink(data);
-
-  const itemsHtml = data.items.map((item, index) => {
+  const itemsHtml = data.items.map((item, i) => {
     const c = TAG_COLORS[item.tagColor] || TAG_COLORS.tooling;
-    const claudeLink = buildClaudeLink(item, data.items, data.edition);
-    const number = String(index + 1).padStart(2, "0");
-    const sourcesHtml = buildSourcesHtml(item.sources || [], c.text);
-    // Render image if available
+    const num = String(i + 1).padStart(2, "0");
+
     const imageHtml = item.imageUrl
-      ? `<img src="${item.imageUrl}" alt="${item.title}" style="display:block;width:100%;height:200px;object-fit:cover;border-bottom:1px solid #222226;" />`
+      ? `<img src="${item.imageUrl}" alt="" style="display:block;width:100%;height:200px;object-fit:cover;border-bottom:1px solid #222226;">`
       : "";
 
-    // Convert **bold** and ==highlight== markers
-    function applyBold(text, accentColor, accentBg) {
-      return (text || "")
-        .replace(/==(.+?)==/g, `<mark style="background:${accentBg};color:${accentColor};padding:1px 4px;border-radius:2px;font-style:normal;">$1</mark>`)
-        .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f0f0f0;font-weight:600;">$1</strong>');
-    }
-
-    // Split summary into paragraphs
-    const paragraphs = (item.summary || "").split(/\n\n+/).filter(Boolean);
-    // Build accent background with low opacity for highlight
-    const accentBg = c.bg;
-
-    const summaryHtml = paragraphs.map(p =>
-      `<p style="font-size:14px;color:#aaa;line-height:1.8;margin:0 0 12px;font-weight:400;">${applyBold(p, c.text, accentBg)}</p>`
+    const summaryHtml = (item.summary || "").split(/\n\n+/).filter(Boolean).map((p) =>
+      `<p style="font-size:14px;color:#aaa;line-height:1.8;margin:0 0 12px;">${renderMarkup(p, c.text, c.bg)}</p>`
     ).join("");
 
-    const signalHtml = applyBold(item.signal || "", c.text, accentBg);
+    const sourcesHtml = (item.sources || []).map((s) =>
+      `<a href="${s.url}" style="display:inline-block;font-size:12px;color:${c.text};font-family:'Courier New',monospace;text-decoration:none;border-bottom:1px solid ${c.text}66;margin-right:20px;padding-bottom:2px;">${s.label} ↗${s.date ? `<span style="color:#555;font-size:11px;margin-left:5px;">${s.date}</span>` : ""}</a>`
+    ).join("");
 
     return `
     <div style="margin-bottom:3px;background:#111113;border:1px solid #222226;border-radius:4px;overflow:hidden;">
       ${imageHtml}
       <div style="padding:24px 28px 28px;">
-
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <span style="font-family:'Courier New',monospace;font-size:10px;color:#555;letter-spacing:0.15em;">${number}</span>
+          <span style="font-family:'Courier New',monospace;font-size:10px;color:#555;letter-spacing:0.15em;">${num}</span>
           <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;text-transform:uppercase;font-family:'Courier New',monospace;">${item.tag}</span>
         </div>
-
         <p style="font-size:20px;font-weight:700;color:#f5f5f5;margin:0 0 16px;line-height:1.25;letter-spacing:-0.03em;">${item.title}</p>
-
         <div style="margin-bottom:16px;">${summaryHtml}</div>
-
-        ${sourcesHtml}
-
+        ${sourcesHtml ? `<div style="margin-bottom:20px;">${sourcesHtml}</div>` : ""}
         <div style="padding:14px 18px;background:#0a0a0b;border-left:3px solid ${c.text};border-radius:0 6px 6px 0;margin-bottom:20px;">
           <p style="font-size:10px;color:${c.text};margin:0 0 6px;text-transform:uppercase;letter-spacing:0.12em;font-family:'Courier New',monospace;font-weight:700;">↳ Signal</p>
-          <p style="font-size:13.5px;color:#ccc;margin:0;line-height:1.65;">${signalHtml}</p>
+          <p style="font-size:13.5px;color:#ccc;margin:0;line-height:1.65;">${renderMarkup(item.signal, c.text, c.bg)}</p>
         </div>
-
-        <a href="${claudeLink}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.08em;font-family:'Courier New',monospace;text-transform:uppercase;">Creuser avec Claude →</a>
-
+        <a href="${claudeDeepLink(item, data.items, data.edition)}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.08em;font-family:'Courier New',monospace;text-transform:uppercase;">Creuser avec Claude →</a>
       </div>
     </div>`;
   }).join("\n");
 
   return `<!DOCTYPE html>
-<html lang="fr" style="color-scheme: dark;">
+<html lang="fr" style="color-scheme:dark;">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta name="color-scheme" content="dark">
-  <meta name="supported-color-schemes" content="dark">
   <title>Signal #${data.edition}</title>
-  <style>
-    :root { color-scheme: dark; }
-    body { background-color: #0a0a0b !important; color: #f0f0f0 !important; }
-    @media (prefers-color-scheme: dark) {
-      body { background-color: #0a0a0b !important; }
-    }
-  </style>
+  <style>:root{color-scheme:dark;}body{background-color:#0a0a0b!important;color:#f0f0f0!important;}</style>
 </head>
-<body style="margin:0;padding:0;background:#0a0a0b;background-color:#0a0a0b;">
+<body style="margin:0;padding:0;background:#0a0a0b;">
   <div style="max-width:620px;margin:0 auto;padding:40px 16px 60px;background:#0a0a0b;">
 
     <div style="padding:32px 0 28px;border-bottom:1px solid #1e1e22;margin-bottom:4px;">
@@ -288,25 +205,23 @@ function buildHtml(data) {
           <p style="font-size:28px;font-weight:700;color:#f5f5f5;margin:0;letter-spacing:-0.04em;">SIGNAL<span style="color:#444;font-weight:300;"> #${data.edition}</span></p>
         </div>
         <div style="text-align:right;padding-top:4px;">
-          <p style="font-family:'Courier New',monospace;font-size:10px;color:#444;margin:0 0 4px;letter-spacing:0.05em;color:#666;">${data.date}</p>
-          <p style="font-family:'Courier New',monospace;font-size:10px;color:#555;margin:0;letter-spacing:0.05em;">${data.items.length} ITEMS</p>
+          <p style="font-family:'Courier New',monospace;font-size:10px;color:#666;margin:0 0 4px;">${data.date}</p>
+          <p style="font-family:'Courier New',monospace;font-size:10px;color:#555;margin:0;">${data.items.length} items</p>
         </div>
       </div>
     </div>
 
-    <div style="height:1px;background:linear-gradient(90deg,#6366f1 0%,#8b5cf6 30%,#ec4899 60%,#0ea5e9 100%);margin-bottom:4px;"></div>
+    <div style="height:1px;background:linear-gradient(90deg,#6366f1,#8b5cf6 30%,#ec4899 60%,#0ea5e9);margin-bottom:4px;"></div>
 
-    <div style="border:1px solid #222226;border-radius:6px;overflow:hidden;margin-bottom:4px;">
-      ${itemsHtml}
-    </div>
+    <div style="border:1px solid #222226;border-radius:6px;overflow:hidden;margin-bottom:4px;">${itemsHtml}</div>
 
     <div style="background:#111113;border:1px solid #222226;border-radius:6px;padding:24px 32px;text-align:center;">
       <p style="font-family:'Courier New',monospace;font-size:10px;color:#666;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 16px;">Aller plus loin</p>
-      <a href="${allTopicsLink}" style="display:inline-block;font-size:12px;font-weight:700;color:#0a0a0b;background:#f0f0f0;border-radius:3px;padding:12px 28px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;font-family:'Courier New',monospace;">Discuter avec Claude →</a>
+      <a href="${allTopicsLink(data)}" style="display:inline-block;font-size:12px;font-weight:700;color:#0a0a0b;background:#f0f0f0;border-radius:3px;padding:12px 28px;text-decoration:none;letter-spacing:0.08em;text-transform:uppercase;font-family:'Courier New',monospace;">Discuter avec Claude →</a>
     </div>
 
     <div style="padding-top:24px;text-align:center;">
-      <p style="font-family:'Courier New',monospace;font-size:10px;color:#2a2a2e;margin:0;letter-spacing:0.1em;">SIGNAL · ÉDITION #${data.edition} · AUTO-GÉNÉRÉ</p>
+      <p style="font-family:'Courier New',monospace;font-size:10px;color:#2a2a2e;margin:0;letter-spacing:0.1em;">SIGNAL · #${data.edition} · AUTO-GÉNÉRÉ</p>
     </div>
 
   </div>
@@ -314,37 +229,33 @@ function buildHtml(data) {
 </html>`;
 }
 
+// ─── Email ────────────────────────────────────────────────────────────────────
+
 async function sendEmail(html, edition) {
   const transporter = nodemailer.createTransport({
-    host: "ssl0.ovh.net",
-    port: 465,
-    secure: true,
-    auth: {
-      user: SENDER_EMAIL,
-      pass: SENDER_PASSWORD,
-    },
+    host: "ssl0.ovh.net", port: 465, secure: true,
+    auth: { user: SENDER_EMAIL, pass: SENDER_PASS },
   });
-
   await transporter.sendMail({
     from: `Signal Newsletter <${SENDER_EMAIL}>`,
     to: RECIPIENT,
     subject: `Signal #${edition} — Veille tech du vendredi`,
     html,
   });
-
   console.log(`Email sent to ${RECIPIENT}`);
 }
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
   try {
     console.log("Starting Signal newsletter generation...");
     const data = await generateNewsletter();
     console.log(`Generated ${data.items.length} items for edition #${data.edition}`);
-    const html = buildHtml(data);
-    await sendEmail(html, data.edition);
+    await sendEmail(buildHtml(data), data.edition);
     console.log("Done.");
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Error:", err.message || err);
     process.exit(1);
   }
 }

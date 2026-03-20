@@ -41,7 +41,7 @@ function saveHistory(data, history) {
     date: data.date,
     titles: data.items.map((i) => i.title),
   };
-  const updated = [entry, ...history].slice(0, 8); // keep last 8 weeks
+  const updated = [entry, ...history].slice(0, 4); // keep last 4 weeks
   writeFileSync(HISTORY_PATH, JSON.stringify(updated, null, 2));
 }
 

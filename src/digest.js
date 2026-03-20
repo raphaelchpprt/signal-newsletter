@@ -1,21 +1,21 @@
-import Anthropic from "@anthropic-ai/sdk";
-import nodemailer from "nodemailer";
-import { readFileSync } from "fs";
-import { resolve, dirname } from "path";
-import { fileURLToPath } from "url";
+import Anthropic from '@anthropic-ai/sdk';
+import nodemailer from 'nodemailer';
+import { readFileSync } from 'fs';
+import { resolve, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const HISTORY_PATH = resolve(__dirname, "../history.json");
+const HISTORY_PATH = resolve(__dirname, '../history.json');
 
-const RECIPIENT    = "hi@raphaelch.me";
+const RECIPIENT = process.env.RECIPIENT_EMAIL;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
-const SENDER_PASS  = process.env.SENDER_PASSWORD;
+const SENDER_PASS = process.env.SENDER_PASSWORD;
 
 // ─── Load last 4 editions from history ────────────────────────────────────────
 
 function loadLastEditions() {
   try {
-    const history = JSON.parse(readFileSync(HISTORY_PATH, "utf8"));
+    const history = JSON.parse(readFileSync(HISTORY_PATH, 'utf8'));
     return history.slice(0, 4);
   } catch {
     return [];
@@ -23,7 +23,10 @@ function loadLastEditions() {
 }
 
 function currentMonth() {
-  return new Date().toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+  return new Date().toLocaleDateString('fr-FR', {
+    month: 'long',
+    year: 'numeric',
+  });
 }
 
 // ─── Claude — no web search, pure synthesis ───────────────────────────────────
@@ -31,16 +34,20 @@ function currentMonth() {
 async function generateDigest(editions) {
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const editionsText = editions.map((e) =>
-    `Édition #${e.edition} (${e.date}) :\n${e.titles.map((t) => `- ${t}`).join("\n")}`
-  ).join("\n\n");
+  const editionsText = editions
+    .map(
+      (e) =>
+        `Édition #${e.edition} (${e.date}) :\n${e.titles.map((t) => `- ${t}`).join('\n')}`,
+    )
+    .join('\n\n');
 
   const response = await client.messages.create({
-    model: "claude-sonnet-4-6",
+    model: 'claude-sonnet-4-6',
     max_tokens: 1500,
-    messages: [{
-      role: "user",
-      content: `Tu es l'assistant de veille tech de Raphaël, développeur front-end chez Kiosk (SaaS CSRD/ESG, stack Remix + React + TypeScript).
+    messages: [
+      {
+        role: 'user',
+        content: `Tu es l'assistant de veille tech de Raphaël, développeur front-end chez Kiosk (SaaS CSRD/ESG, stack Remix + React + TypeScript).
 
 Voici les sujets couverts dans les 4 dernières éditions de sa newsletter Signal :
 
@@ -68,40 +75,51 @@ IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après, s
     }
   ]
 }`,
-    }],
+      },
+    ],
   });
 
-  const textBlock = response.content.filter((b) => b.type === "text").pop();
-  if (!textBlock) throw new Error("No text block in response");
+  const textBlock = response.content.filter((b) => b.type === 'text').pop();
+  if (!textBlock) throw new Error('No text block in response');
 
-  const raw = textBlock.text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+  const raw = textBlock.text
+    .replace(/```json\n?/g, '')
+    .replace(/```\n?/g, '')
+    .trim();
   const extracted = (raw.match(/\{[\s\S]*\}/) || [])[0] || raw;
   try {
     return JSON.parse(extracted);
   } catch {
-    return JSON.parse(extracted.replace(/[\r\n\t]/g, " "));
+    return JSON.parse(extracted.replace(/[\r\n\t]/g, ' '));
   }
 }
 
 // ─── HTML ─────────────────────────────────────────────────────────────────────
 
 function renderMarkup(text) {
-  return (text || "")
-    .replace(/==(.+?)==/g, `<mark style="background:#1a1035;color:#a78bfa;padding:1px 5px;border-radius:2px;">$1</mark>`)
-    .replace(/\*\*(.+?)\*\*/g, `<strong style="color:#f0f0f0;font-weight:600;">$1</strong>`);
+  return (text || '')
+    .replace(
+      /==(.+?)==/g,
+      `<mark style="background:#1a1035;color:#a78bfa;padding:1px 5px;border-radius:2px;">$1</mark>`,
+    )
+    .replace(
+      /\*\*(.+?)\*\*/g,
+      `<strong style="color:#f0f0f0;font-weight:600;">$1</strong>`,
+    );
 }
 
 function buildDigestHtml(data) {
-  const trendsHtml = data.trends.map((trend, i) => {
-    const num = String(i + 1).padStart(2, "0");
-    const accents = [
-      { text: "#a78bfa", border: "#4c1d95", bg: "#1a1035" },
-      { text: "#34d399", border: "#065f46", bg: "#0d2818" },
-      { text: "#60a5fa", border: "#1e3a5f", bg: "#0c1a2e" },
-    ];
-    const c = accents[i] || accents[0];
+  const trendsHtml = data.trends
+    .map((trend, i) => {
+      const num = String(i + 1).padStart(2, '0');
+      const accents = [
+        { text: '#a78bfa', border: '#4c1d95', bg: '#1a1035' },
+        { text: '#34d399', border: '#065f46', bg: '#0d2818' },
+        { text: '#60a5fa', border: '#1e3a5f', bg: '#0c1a2e' },
+      ];
+      const c = accents[i] || accents[0];
 
-    return `
+      return `
     <div style="margin-bottom:3px;background:#111113;border:1px solid #222226;border-radius:4px;overflow:hidden;">
       <div style="padding:24px 28px 28px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
@@ -116,7 +134,8 @@ function buildDigestHtml(data) {
         </div>
       </div>
     </div>`;
-  }).join("\n");
+    })
+    .join('\n');
 
   return `<!DOCTYPE html>
 <html lang="fr" style="color-scheme:dark;">
@@ -161,7 +180,9 @@ function buildDigestHtml(data) {
 
 async function sendEmail(html, month) {
   const transporter = nodemailer.createTransport({
-    host: "ssl0.ovh.net", port: 465, secure: true,
+    host: 'ssl0.ovh.net',
+    port: 465,
+    secure: true,
     auth: { user: SENDER_EMAIL, pass: SENDER_PASS },
   });
   await transporter.sendMail({
@@ -177,18 +198,20 @@ async function sendEmail(html, month) {
 
 async function main() {
   try {
-    console.log("Starting monthly digest generation...");
+    console.log('Starting monthly digest generation...');
     const editions = loadLastEditions();
     if (editions.length < 2) {
-      console.log("Not enough history yet (need at least 2 editions). Skipping.");
+      console.log(
+        'Not enough history yet (need at least 2 editions). Skipping.',
+      );
       return;
     }
     const data = await generateDigest(editions);
     console.log(`Generated digest for ${data.month}`);
     await sendEmail(buildDigestHtml(data), data.month);
-    console.log("Done.");
+    console.log('Done.');
   } catch (err) {
-    console.error("Error:", err.message || err);
+    console.error('Error:', err.message || err);
     process.exit(1);
   }
 }

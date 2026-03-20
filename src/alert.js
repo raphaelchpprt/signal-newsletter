@@ -1,7 +1,7 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 const transporter = nodemailer.createTransport({
-  host: "ssl0.ovh.net",
+  host: 'ssl0.ovh.net',
   port: 465,
   secure: true,
   auth: {
@@ -14,7 +14,7 @@ const runUrl = `https://github.com/${process.env.GITHUB_REPOSITORY}/actions/runs
 
 await transporter.sendMail({
   from: `Signal Newsletter <${process.env.SENDER_EMAIL}>`,
-  to: "hi@raphaelch.me",
+  to: process.env.RECIPIENT_EMAIL,
   subject: `⚠️ Signal — workflow failed`,
   html: `
     <div style="font-family:monospace;background:#0a0a0b;color:#f0f0f0;padding:32px;max-width:500px;border-radius:8px;">
@@ -25,4 +25,4 @@ await transporter.sendMail({
   `,
 });
 
-console.log("Alert sent.");
+console.log('Alert sent.');

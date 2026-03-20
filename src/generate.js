@@ -11,7 +11,7 @@ const HISTORY_PATH = resolve(__dirname, '../history.json');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
-const RECIPIENT = 'hi@raphaelch.me';
+const RECIPIENT = process.env.RECIPIENT_EMAIL;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
 const SENDER_PASS = process.env.SENDER_PASSWORD;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
@@ -20,7 +20,7 @@ const TAG_COLORS = {
   frontend: { bg: '#1a1035', text: '#a78bfa', border: '#4c1d95' },
   ia: { bg: '#0d2818', text: '#34d399', border: '#065f46' },
   csrd: { bg: '#0c1a2e', text: '#60a5fa', border: '#1e3a5f' },
-  tooling: { bg: '#1f1200', text: '#fbbf24', border: '#78350f' },
+  tooling: { bg: '#1f1200', text: '#fbbf24', border: '#92620a' },
   arch: { bg: '#0f1f10', text: '#86efac', border: '#14532d' },
   geo: { bg: '#200a0a', text: '#f87171', border: '#7f1d1d' },
 };
@@ -79,7 +79,7 @@ function renderMarkup(text, color, bgColor, gradientHighlight = false) {
     .replace(
       /==(.+?)==/g,
       gradientHighlight
-        ? `<span style="background:linear-gradient(90deg,#0DFF50,#096BDE 40%,#8E47FE 70%,#0DFF50);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:600;">$1</span>`
+        ? `<mark style="background:linear-gradient(90deg,#0DFF5022,#096BDE22 40%,#8E47FE22 70%,#0DFF5022);color:#e0e0e0;padding:2px 6px;border-radius:3px;font-weight:500;border-bottom:1px solid #0DFF5066;">$1</mark>`
         : `<mark style="background:${bgColor};color:${color};padding:1px 5px;border-radius:2px;">$1</mark>`,
     )
     .replace(
@@ -252,18 +252,17 @@ function buildHtml(data) {
         .join('');
 
       return `
-    <div style="margin-bottom:3px;background:#111113;border:1px solid #222226;border-radius:12px;overflow:hidden;">
+    <div style="margin-bottom:10px;background:#111113;border:1px solid #222226;border-radius:12px;overflow:hidden;">
       ${imageHtml}
       <div style="padding:24px 28px 28px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;letter-spacing:0.15em;">${num}</span>
           <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;font-family:'JetBrains Mono',monospace;">${item.tag}</span>
         </div>
-        <p style="font-size:20px;font-weight:400;color:#f5f5f5;margin:0 0 16px;line-height:1.25;letter-spacing:-0.01em;font-family:'DM Serif Display',serif;">${item.title}</p>
+        <p style="font-size:20px;font-weight:600;color:#f5f5f5;margin:0 0 16px;line-height:1.25;letter-spacing:-0.02em;font-family:'Golos Text',sans-serif;">${item.title}</p>
         <div style="margin-bottom:16px;">${summaryHtml}</div>
         ${sourcesHtml ? `<div style="margin-bottom:20px;">${sourcesHtml}</div>` : ''}
         <div style="padding:14px 18px;background:#0a0a0b;border-left:3px solid ${c.text};border-radius:0 8px 8px 0;margin-bottom:20px;">
-          <p style="font-size:14px;font-weight:400;color:${c.text};margin:0 0 8px;font-family:'JetBrains Mono',monospace;">signal</p>
           <p style="font-size:13.5px;color:#ccc;margin:0;line-height:1.65;font-family:'Golos Text',sans-serif;">${renderMarkup(item.signal, c.text, c.bg)}</p>
         </div>
         <a href="${claudeDeepLink(item, data.items, data.edition)}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;">creuser avec claude →</a>
@@ -290,7 +289,7 @@ function buildHtml(data) {
     .join(' · ')} — Ta veille tech de la semaine.</span>
   <div style="max-width:620px;margin:0 auto;padding:40px 16px 60px;background:#0a0a0b;">
 
-    <div style="padding:32px 0 28px;border-bottom:1px solid #1e1e22;margin-bottom:4px;">
+    <div style="padding:32px 0 28px;border-bottom:1px solid #1e1e22;margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
           <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;color:#444;margin:0 0 8px;">veille tech · raphaël</p>
@@ -303,17 +302,17 @@ function buildHtml(data) {
       </div>
     </div>
 
-    <div style="height:1px;background:linear-gradient(90deg,#0DFF50,#096BDE 40%,#8E47FE 70%,#0DFF50);margin-bottom:4px;"></div>
+    <div style="height:1px;background:linear-gradient(90deg,#0DFF50,#096BDE 40%,#8E47FE 70%,#0DFF50);margin-bottom:12px;"></div>
 
     ${
       data.editorial
-        ? `<div style="padding:20px 24px;background:#111113;border:1px solid #222226;border-radius:12px;margin-bottom:4px;">
+        ? `<div style="padding:20px 24px;background:#111113;border:1px solid #222226;border-radius:12px;margin-bottom:12px;">
       <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;letter-spacing:0.15em;margin:0 0 10px;">cette semaine</p>
-      <p style="font-size:14px;color:#bbb;line-height:1.75;margin:0;">${renderMarkup(data.editorial, '#a78bfa', '#1a1035')}</p>
+      <p style="font-size:14px;color:#bbb;line-height:1.75;margin:0;">${renderMarkup(data.editorial, '#a78bfa', '#1a1035', true)}</p>
     </div>`
         : ''
     }
-    <div style="margin-bottom:4px;">${itemsHtml}</div>
+    <div style="margin-bottom:12px;">${itemsHtml}</div>
 
     <div style="background:#111113;border:1px solid #222226;border-radius:12px;padding:24px 32px;text-align:center;">
       <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#666;letter-spacing:0.15em;margin:0 0 16px;">aller plus loin</p>
@@ -349,7 +348,87 @@ async function sendEmail(html, edition) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
+const MOCK_DATA = {
+  edition: 99,
+  date: 'vendredi 20 mars 2026',
+  editorial:
+    'Cette semaine, **les LLMs envahissent les IDEs** et la reglementation ESG se stabilise. ==Le stack JS/TS est en pleine recomposition== — une semaine dense.',
+  items: [
+    {
+      tag: 'frontend',
+      tagColor: 'frontend',
+      title: 'Remix 3 drops React — bigger than it sounds',
+      summary:
+        'Remix v3 est une reecriture complete basee sur un fork de Preact.\n\n**90% des projets Remix existants** ne sont pas concernes par la migration immediate. ==React Router v7 reste l option recommandee.==',
+      signal:
+        'Kiosk tourne sur Remix v2. **Pas d urgence de migrer** — mais ==surveille React Router v7 pour les prochains sprints==.',
+      imageUrl: null,
+      sources: [
+        { label: 'remix.run', url: 'https://remix.run', date: '18 mars 2026' },
+      ],
+    },
+    {
+      tag: 'ia',
+      tagColor: 'ia',
+      title: 'Claude Code vs Cursor — le bon workflow en 2026',
+      summary:
+        'Les devs combinent les deux outils selon les phases.\n\n**Claude Code domine sur les refactos larges**. ==Cursor reste superieur pour l ecriture active au quotidien.==',
+      signal:
+        '==Utilise Claude Code pour les gros chantiers Kiosk== — **la combinaison optimale** sur ton stack TypeScript.',
+      imageUrl: null,
+      sources: [
+        {
+          label: 'Anthropic',
+          url: 'https://anthropic.com',
+          date: '17 mars 2026',
+        },
+      ],
+    },
+    {
+      tag: 'csrd',
+      tagColor: 'csrd',
+      title: 'Post-Omnibus : 90% des entreprises continuent de reporter',
+      summary:
+        'L Omnibus I a reduit le scope CSRD de ~85%.\n\n**90% des entreprises descoppees** maintiennent leur reporting ESG volontairement. ==La demande se deplace vers le value-driven.==',
+      signal:
+        '**Bonne nouvelle pour Kiosk** — le marche reste fort. ==Repositionne le messaging vers la valeur business==.',
+      imageUrl: null,
+      sources: [
+        {
+          label: 'ESG Today',
+          url: 'https://esgtoday.com',
+          date: '16 mars 2026',
+        },
+      ],
+    },
+    {
+      tag: 'tooling',
+      tagColor: 'tooling',
+      title: 'TypeScript Native Preview — compilateur 10x plus rapide',
+      summary:
+        'Microsoft a publie un compilateur TypeScript reecrit en Go.\n\n**Les benchmarks montrent 10x de gain** sur les gros projets. ==Le DX TypeScript va changer radicalement en 2026.==',
+      signal:
+        'Sur Kiosk, ==teste la preview des que stable== — **le gain sur les build times** sera immediat.',
+      imageUrl: null,
+      sources: [
+        {
+          label: 'devblogs.microsoft.com',
+          url: 'https://devblogs.microsoft.com',
+          date: '15 mars 2026',
+        },
+      ],
+    },
+  ],
+};
+
 async function main() {
+  const isDryRun = process.argv.includes('--dry-run');
+  if (isDryRun) {
+    const { writeFileSync } = await import('fs');
+    writeFileSync('preview.html', buildHtml(MOCK_DATA));
+    console.log('Preview saved to preview.html — open it in your browser.');
+    return;
+  }
   try {
     console.log('Starting Signal newsletter generation...');
     const data = await generateNewsletter();

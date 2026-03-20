@@ -1,5 +1,15 @@
 [
   {
+    "edition": 13,
+    "date": "20 mars 2026",
+    "titles": [
+      "TypeScript 6.0 RC : le dernier compilateur JS avant l'ère Go",
+      "GPT-5.4 mini & nano : OpenAI standardise l'architecture sous-agents",
+      "CSRD : les premières 1 100 filings révèlent +30 % de longueur et un marché qui reporte volontairement",
+      "Cloudflare Threat Report 2026 : 94 % des logins sont des bots, les attaques passent par votre SaaS"
+    ]
+  },
+  {
     "edition": 12,
     "date": "20 mars 2026",
     "titles": [

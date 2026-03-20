@@ -105,7 +105,15 @@ async function generateNewsletter() {
     }
   }
 
+  // Strip markdown fences and any leading/trailing text
   jsonText = jsonText.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+
+  // Extract JSON object if wrapped in extra text
+  const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+  if (jsonMatch) {
+    jsonText = jsonMatch[0];
+  }
+
   return JSON.parse(jsonText);
 }
 

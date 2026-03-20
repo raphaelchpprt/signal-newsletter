@@ -34,9 +34,10 @@ Ta mission : générer une newsletter hebdomadaire appelée "Signal" avec 4 à 5
 
 Pour chaque sujet, tu dois :
 1. Faire une recherche web pour trouver des actus récentes et concrètes
-2. Synthétiser en 3-4 phrases maximum (pas de jargon corporate, ton direct)
-3. Ajouter un "Signal pour toi" : ce que ça implique concrètement pour son travail chez Kiosk ou sa pratique de dev
+2. Rédiger un résumé de 2 paragraphes distincts séparés par \n\n (pas de jargon corporate, ton direct). Dans chaque paragraphe, entoure les mots clés importants, chiffres, noms de technos ou termes significatifs avec **double astérisques** — ils seront rendus en gras dans l'email.
+3. Ajouter un "Signal pour toi" en 2-3 phrases avec les éléments clés en **gras**
 4. Retourner 1 à 2 URLs sources — uniquement des sources primaires fiables (voir liste ci-dessous)
+5. Si l'article source a une image d'illustration, retourner son URL directe (imageUrl). Sinon null.
 
 SOURCES AUTORISÉES (privilégier dans cet ordre) :
 - Annonces officielles : github.com/blog, devblogs.microsoft.com, blog.angular.io, react.dev/blog, remix.run/blog, nodejs.org/en/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog
@@ -72,6 +73,7 @@ Format de réponse : JSON uniquement, sans markdown ni backticks, selon ce sché
       "title": "<titre accrocheur, max 12 mots>",
       "summary": "<résumé factuel, 3-4 phrases, ton direct>",
       "signal": "<ce que ça implique concrètement pour Raphaël>",
+      "imageUrl": "<url directe vers une image de l'article source, ou null si pas d'image disponible>",
       "sources": [
         { "label": "<nom court de la source>", "url": "<url complète>", "date": "<date de publication ex: 18 mars 2026>" }
       ]
@@ -166,21 +168,47 @@ function buildHtml(data) {
     const claudeLink = buildClaudeLink(item, data.items, data.edition);
     const number = String(index + 1).padStart(2, "0");
     const sourcesHtml = buildSourcesHtml(item.sources || [], c.text);
+    // Render image if available
+    const imageHtml = item.imageUrl
+      ? `<img src="${item.imageUrl}" alt="${item.title}" style="display:block;width:100%;height:200px;object-fit:cover;border-bottom:1px solid #222226;" />`
+      : "";
+
+    // Convert **bold** markers to <strong> tags
+    function applyBold(text) {
+      return (text || "").replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f5f5f5;font-weight:600;">$1</strong>');
+    }
+
+    // Split summary into paragraphs
+    const paragraphs = (item.summary || "").split(/\n\n+/).filter(Boolean);
+    const summaryHtml = paragraphs.map(p =>
+      `<p style="font-size:14px;color:#aaa;line-height:1.8;margin:0 0 12px;font-weight:400;">${applyBold(p)}</p>`
+    ).join("");
+
+    const signalHtml = applyBold(item.signal || "");
+
     return `
-    <div style="margin-bottom:2px;background:#111113;border:1px solid #222226;">
-      <div style="padding:28px 32px;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+    <div style="margin-bottom:3px;background:#111113;border:1px solid #222226;border-radius:4px;overflow:hidden;">
+      ${imageHtml}
+      <div style="padding:24px 28px 28px;">
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
           <span style="font-family:'Courier New',monospace;font-size:10px;color:#555;letter-spacing:0.15em;">${number}</span>
           <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;text-transform:uppercase;font-family:'Courier New',monospace;">${item.tag}</span>
         </div>
-        <p style="font-size:17px;font-weight:600;color:#f0f0f0;margin:0 0 12px;line-height:1.35;letter-spacing:-0.02em;">${item.title}</p>
-        <p style="font-size:13.5px;color:#999;line-height:1.75;margin:0 0 16px;font-weight:400;">${item.summary}</p>
+
+        <p style="font-size:20px;font-weight:700;color:#f5f5f5;margin:0 0 16px;line-height:1.25;letter-spacing:-0.03em;">${item.title}</p>
+
+        <div style="margin-bottom:16px;">${summaryHtml}</div>
+
         ${sourcesHtml}
-        <div style="padding:14px 16px;background:#0d0d0f;border-left:2px solid ${c.text};border-radius:0 4px 4px 0;margin-bottom:20px;">
-          <p style="font-size:12px;color:#777;margin:0 0 3px;text-transform:uppercase;letter-spacing:0.1em;font-family:'Courier New',monospace;">Signal</p>
-          <p style="font-size:13px;color:#e8e8e8;margin:0;line-height:1.6;">${item.signal}</p>
+
+        <div style="padding:14px 18px;background:#0a0a0b;border-left:3px solid ${c.text};border-radius:0 6px 6px 0;margin-bottom:20px;">
+          <p style="font-size:10px;color:${c.text};margin:0 0 6px;text-transform:uppercase;letter-spacing:0.12em;font-family:'Courier New',monospace;font-weight:700;">↳ Signal</p>
+          <p style="font-size:13.5px;color:#ccc;margin:0;line-height:1.65;">${signalHtml}</p>
         </div>
-        <a href="${claudeLink}" style="display:inline-block;font-size:11px;font-weight:600;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:6px 14px;text-decoration:none;letter-spacing:0.08em;font-family:'Courier New',monospace;text-transform:uppercase;">Creuser →</a>
+
+        <a href="${claudeLink}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.08em;font-family:'Courier New',monospace;text-transform:uppercase;">Creuser avec Claude →</a>
+
       </div>
     </div>`;
   }).join("\n");

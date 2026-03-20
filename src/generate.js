@@ -125,8 +125,8 @@ function parseJson(raw) {
   const cleaned = raw
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
-    .replace(/‘|’/g, "'") // curly apostrophes
-    .replace(/“|”/g, '"') // curly quotes
+    .replace(/[‘’ʼ]/g, "'")
+    .replace(/[“”]/g, '"')
     .trim();
   const extracted = (cleaned.match(/\{[\s\S]*\}/) || [])[0] || cleaned;
   try {
@@ -163,13 +163,13 @@ FORMAT — JSON pur, sans texte ni backtick :
 {
   "edition": <semaine>,
   "date": "<date fr>",
-  "editorial": "<2-3 phrases fil rouge, **gras** et ==surligné== autorisés>",
+  "editorial": "<1 phrase, fil rouge, max 20 mots, **gras** et ==surligné== autorisés>",
   "items": [{
     "tag": "<catégorie>",
     "tagColor": "<frontend|ia|csrd|tooling|arch|geo>",
     "title": "<max 12 mots>",
-    "summary": "<2§ \n\n, max 2 phrases/§, 2x **gras**, 1x ==surligné==>",
-    "signal": "<2-3 phrases, 1x **gras**, 1x ==surligné==>",
+    "summary": "<2§ \n\n, 1-2 phrases/§ max, 2x **gras**, 1x ==surligné==>",
+    "signal": "<1-2 phrases, 1x **gras**, 1x ==surligné==>",
     "imageUrl": "<url image ou null>",
     "sources": [{ "label": "<nom>", "url": "<url>", "date": "<ex: 18 mars 2026>" }]
   }]
@@ -182,7 +182,7 @@ async function generateNewsletter() {
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 4000,
+    max_tokens: 6000,
     tools: [{ type: 'web_search_20250305', name: 'web_search' }],
     system: SYSTEM_PROMPT,
     messages: [
@@ -211,11 +211,8 @@ async function generateNewsletter() {
 
 // ─── HTML ─────────────────────────────────────────────────────────────────────
 
-function claudeDeepLink(item, allItems, edition) {
-  const context = allItems
-    .map((i) => `- [${i.tag}] ${i.title} : ${i.summary} | Signal : ${i.signal}`)
-    .join('\n');
-  const prompt = `Newsletter Signal #${edition} :\n\n${context}\n\nCreuse ce sujet : "${item.title}"\n\nAnalyse + implications concrètes pour dev front-end chez Kiosk (Remix + React + TypeScript, SaaS CSRD/ESG).`;
+function claudeDeepLink(item, edition) {
+  const prompt = `Signal #${edition} — "${item.title}" : analyse + implications pour dev front-end Kiosk (Remix+React+TS, SaaS CSRD/ESG). Context: ${item.signal}`;
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 }
 
@@ -247,7 +244,7 @@ function buildHtml(data) {
       const sourcesHtml = (item.sources || [])
         .map(
           (s) =>
-            `<a href="${s.url}" style="display:inline-block;font-size:12px;color:${c.text};font-family:'JetBrains Mono',monospace;text-decoration:none;border-bottom:1px solid ${c.text}66;margin-right:20px;padding-bottom:2px;">${s.label} ↗${s.date ? `<span style="color:#555;font-size:11px;margin-left:5px;">${s.date}</span>` : ''}</a>`,
+            `<a href="${s.url}" style="display:inline-block;font-size:12px;color:${c.text};font-family:'JetBrains Mono',monospace;text-decoration:none;border-bottom:1px solid ${c.text}66;margin-right:20px;padding-bottom:2px;">${s.label} ↗${s.date ? `<span style="color:#777;font-size:11px;margin-left:5px;">${s.date}</span>` : ''}</a>`,
         )
         .join('');
 
@@ -256,7 +253,7 @@ function buildHtml(data) {
       ${imageHtml}
       <div style="padding:24px 28px 28px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
-          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;letter-spacing:0.15em;">${num}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#777;letter-spacing:0.15em;">${num}</span>
           <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;font-family:'JetBrains Mono',monospace;">${item.tag}</span>
         </div>
         <p style="font-size:20px;font-weight:600;color:#f5f5f5;margin:0 0 16px;line-height:1.25;letter-spacing:-0.02em;font-family:'Golos Text',sans-serif;">${item.title}</p>
@@ -265,7 +262,7 @@ function buildHtml(data) {
         <div style="padding:14px 18px;background:#0a0a0b;border-left:3px solid ${c.text};border-radius:0 8px 8px 0;margin-bottom:20px;">
           <p style="font-size:13.5px;color:#ccc;margin:0;line-height:1.65;font-family:'Golos Text',sans-serif;">${renderMarkup(item.signal, c.text, c.bg)}</p>
         </div>
-        <a href="${claudeDeepLink(item, data.items, data.edition)}" style="display:inline-block;font-size:11px;font-weight:700;color:${c.text};background:${c.bg};border:1px solid ${c.border};border-radius:3px;padding:7px 16px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;">creuser avec claude →</a>
+        <a href="${claudeDeepLink(item, data.edition)}" style="display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:#ffffff;background:transparent;border:1px solid #ffffff44;border-radius:4px;padding:7px 14px;text-decoration:none;letter-spacing:0.04em;font-family:'Golos Text',sans-serif;"><img src="https://cdn.simpleicons.org/claude/D97757" width="13" height="13" alt="Claude" style="display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0;">creuser avec claude →</a>
       </div>
     </div>`;
     })
@@ -278,8 +275,6 @@ function buildHtml(data) {
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <title>Signal #${data.edition}</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Golos+Text:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
   <style>:root{color-scheme:dark;}body{background-color:#0a0a0b!important;color:#f0f0f0!important;font-family:'Golos Text',sans-serif;}</style>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0b;">
@@ -292,12 +287,12 @@ function buildHtml(data) {
     <div style="padding:32px 0 28px;border-bottom:1px solid #1e1e22;margin-bottom:12px;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;">
         <div>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;color:#444;margin:0 0 8px;">veille tech · raphaël</p>
-          <p style="font-size:28px;font-weight:400;color:#f5f5f5;margin:0;letter-spacing:-0.02em;font-family:'DM Serif Display',serif;">SIGNAL<span style="color:#444;font-weight:400;font-family:'DM Serif Display',serif;"> #${data.edition}</span></p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:0.2em;color:#777;margin:0 0 8px;">veille tech · raphaël</p>
+          <p style="font-size:28px;font-weight:400;color:#f5f5f5;margin:0;letter-spacing:-0.02em;font-family:'DM Serif Display',serif;">SIGNAL<span style="color:#666;font-weight:400;font-family:'DM Serif Display',serif;"> #${data.edition}</span></p>
         </div>
         <div style="text-align:right;padding-top:4px;">
-          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#666;margin:0 0 4px;">${data.date}</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;margin:0;">${data.items.length} items</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;margin:0 0 4px;">${data.date}</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#777;margin:0;">${data.items.length} items</p>
         </div>
       </div>
     </div>
@@ -315,12 +310,13 @@ function buildHtml(data) {
     <div style="margin-bottom:12px;">${itemsHtml}</div>
 
     <div style="background:#111113;border:1px solid #222226;border-radius:12px;padding:24px 32px;text-align:center;">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#666;letter-spacing:0.15em;margin:0 0 16px;">aller plus loin</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;letter-spacing:0.15em;margin:0 0 16px;">aller plus loin</p>
       <a href="${allTopicsLink(data)}" style="display:inline-block;font-size:12px;font-weight:700;color:#0a0a0b;background:#f0f0f0;border-radius:3px;padding:12px 28px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;">discuter avec claude →</a>
     </div>
 
     <div style="padding-top:24px;text-align:center;">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#2a2a2e;margin:0;letter-spacing:0.08em;">signal · #${data.edition}</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;margin:0 0 6px;letter-spacing:0.08em;">signal · #${data.edition}</p>
+      <a href="https://raphaelch.me" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:#f0f0f0;text-decoration:none;letter-spacing:0.06em;">raphaelch.me</a>
     </div>
 
   </div>
@@ -337,13 +333,15 @@ async function sendEmail(html, edition) {
     secure: true,
     auth: { user: SENDER_EMAIL, pass: SENDER_PASS },
   });
-  await transporter.sendMail({
+  const info = await transporter.sendMail({
     from: `Signal Newsletter <${SENDER_EMAIL}>`,
     to: RECIPIENT,
     subject: `Signal #${edition} — Veille tech du vendredi`,
     html,
   });
-  console.log(`Email sent to ${RECIPIENT}`);
+  console.log(
+    `Email sent to ${RECIPIENT} — messageId: ${info.messageId} — response: ${info.response}`,
+  );
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────

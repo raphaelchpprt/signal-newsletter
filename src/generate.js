@@ -36,7 +36,23 @@ Pour chaque sujet, tu dois :
 1. Faire une recherche web pour trouver des actus récentes et concrètes
 2. Synthétiser en 3-4 phrases maximum (pas de jargon corporate, ton direct)
 3. Ajouter un "Signal pour toi" : ce que ça implique concrètement pour son travail chez Kiosk ou sa pratique de dev
-4. Retourner 1 à 2 URLs sources réelles trouvées pendant la recherche (articles, annonces officielles, blog posts)
+4. Retourner 1 à 2 URLs sources — uniquement des sources primaires fiables (voir liste ci-dessous)
+
+SOURCES AUTORISÉES (privilégier dans cet ordre) :
+- Annonces officielles : github.com/blog, devblogs.microsoft.com, blog.angular.io, react.dev/blog, remix.run/blog, nodejs.org/en/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog
+- Tech fiable : thenewstack.io, changelog.com, css-tricks.com, smashingmagazine.com, web.dev, developer.chrome.com, webkit.org/blog
+- IA/ML : anthropic.com/news, openai.com/blog, huggingface.co/blog, simonwillison.net
+- ESG/CSRD : esgtoday.com, esgnews.com, responsible-investor.com, consilium.europa.eu, eur-lex.europa.eu, efrag.org
+- Presse tech sérieuse : techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com
+
+SOURCES INTERDITES :
+- Sites de contenu généré par IA (articles sans auteur identifié, SEO farms)
+- Medium sauf publications officielles d'entreprises
+- Sites avec des titres clickbait ou du contenu clairement synthétisé
+- Toute URL qui ne charge pas ou qui redirige vers une page d'erreur
+- nxcode.io, ryzlabs.com, programming-helper.com et autres agrégateurs IA
+
+Si tu ne trouves pas de source fiable sur un sujet, choisis un autre sujet pour lequel tu as une vraie source.
 
 Thèmes à couvrir chaque semaine (équilibrer) :
 - Écosystème JS/TS (Remix, React, Node, Vite, tooling)
@@ -57,7 +73,7 @@ Format de réponse : JSON uniquement, sans markdown ni backticks, selon ce sché
       "summary": "<résumé factuel, 3-4 phrases, ton direct>",
       "signal": "<ce que ça implique concrètement pour Raphaël>",
       "sources": [
-        { "label": "<nom court de la source>", "url": "<url complète>" }
+        { "label": "<nom court de la source>", "url": "<url complète>", "date": "<date de publication ex: 18 mars 2026>" }
       ]
     }
   ]
@@ -77,7 +93,7 @@ async function generateNewsletter() {
     messages: [
       {
         role: "user",
-        content: `Génère l'édition #${weekNum} de Signal pour le ${today}. Fais des recherches web sur les actus de la semaine avant de rédiger. Retourne uniquement le JSON, sans texte autour.`,
+        content: `Génère l'édition #${weekNum} de Signal pour le ${today}. Fais des recherches web sur les actus des 7 derniers jours uniquement. Ignore tout ce qui est plus vieux que 7 jours. Retourne uniquement le JSON, sans texte autour.`,
       },
     ],
   });

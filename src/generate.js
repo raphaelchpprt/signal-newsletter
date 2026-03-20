@@ -34,8 +34,10 @@ Ta mission : générer une newsletter hebdomadaire appelée "Signal" avec 4 à 5
 
 Pour chaque sujet, tu dois :
 1. Faire une recherche web pour trouver des actus récentes et concrètes
-2. Rédiger un résumé de 2 paragraphes distincts séparés par \n\n (pas de jargon corporate, ton direct). Dans chaque paragraphe, entoure les mots clés importants, chiffres, noms de technos ou termes significatifs avec **double astérisques** — ils seront rendus en gras dans l'email.
-3. Ajouter un "Signal pour toi" en 2-3 phrases avec les éléments clés en **gras**
+2. Rédiger un résumé de 2 paragraphes distincts séparés par \n\n (pas de jargon corporate, ton direct).
+   - Utilise **double astérisques** uniquement pour : les chiffres avec leur contexte ("**10x plus rapide**", "**90% des entreprises**"), et les idées clés sous forme de courtes conclusions ("**React n'est plus seul**", "**le coût a chuté**"). Maximum 2-3 occurrences par paragraphe. PAS de noms de boîtes, PAS de noms de technos seuls.
+   - Utilise ==double égal== pour surligner : une phrase courte ou fragment qui résume l'enjeu principal du sujet. Une seule occurrence par résumé.
+3. Ajouter un "Signal pour toi" en 2-3 phrases. Même règles : **gras** pour chiffres+contexte et idées clés, ==surligné== pour le takeaway principal.
 4. Retourner 1 à 2 URLs sources — uniquement des sources primaires fiables (voir liste ci-dessous)
 5. Si l'article source a une image d'illustration, retourner son URL directe (imageUrl). Sinon null.
 
@@ -153,11 +155,11 @@ function buildSourcesHtml(sources, accentColor) {
   if (!sources || sources.length === 0) return "";
   const links = sources
     .map((s) => {
-      const dateStr = s.date ? ` <span style="color:#666;font-size:9px;margin-left:3px;">${s.date}</span>` : "";
-      return `<a href="${s.url}" style="display:inline-block;font-size:10px;color:${accentColor};font-family:'Courier New',monospace;letter-spacing:0.05em;text-decoration:none;border-bottom:1px solid ${accentColor}55;margin-right:16px;padding-bottom:1px;">${s.label} ↗${dateStr}</a>`;
+      const dateStr = s.date ? ` <span style="color:#555;font-size:11px;margin-left:5px;">${s.date}</span>` : "";
+      return `<a href="${s.url}" style="display:inline-block;font-size:12px;color:${accentColor};font-family:'Courier New',monospace;letter-spacing:0.04em;text-decoration:none;border-bottom:1px solid ${accentColor}66;margin-right:20px;padding-bottom:2px;">${s.label} ↗${dateStr}</a>`;
     })
     .join("");
-  return `<div style="margin-bottom:16px;">${links}</div>`;
+  return `<div style="margin-bottom:20px;">${links}</div>`;
 }
 
 function buildHtml(data) {
@@ -173,18 +175,23 @@ function buildHtml(data) {
       ? `<img src="${item.imageUrl}" alt="${item.title}" style="display:block;width:100%;height:200px;object-fit:cover;border-bottom:1px solid #222226;" />`
       : "";
 
-    // Convert **bold** markers to <strong> tags
-    function applyBold(text) {
-      return (text || "").replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f5f5f5;font-weight:600;">$1</strong>');
+    // Convert **bold** and ==highlight== markers
+    function applyBold(text, accentColor, accentBg) {
+      return (text || "")
+        .replace(/==(.+?)==/g, `<mark style="background:${accentBg};color:${accentColor};padding:1px 4px;border-radius:2px;font-style:normal;">$1</mark>`)
+        .replace(/\*\*(.+?)\*\*/g, '<strong style="color:#f0f0f0;font-weight:600;">$1</strong>');
     }
 
     // Split summary into paragraphs
     const paragraphs = (item.summary || "").split(/\n\n+/).filter(Boolean);
+    // Build accent background with low opacity for highlight
+    const accentBg = c.bg;
+
     const summaryHtml = paragraphs.map(p =>
-      `<p style="font-size:14px;color:#aaa;line-height:1.8;margin:0 0 12px;font-weight:400;">${applyBold(p)}</p>`
+      `<p style="font-size:14px;color:#aaa;line-height:1.8;margin:0 0 12px;font-weight:400;">${applyBold(p, c.text, accentBg)}</p>`
     ).join("");
 
-    const signalHtml = applyBold(item.signal || "");
+    const signalHtml = applyBold(item.signal || "", c.text, accentBg);
 
     return `
     <div style="margin-bottom:3px;background:#111113;border:1px solid #222226;border-radius:4px;overflow:hidden;">

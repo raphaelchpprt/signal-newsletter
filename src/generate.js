@@ -285,7 +285,7 @@ function buildHtml(data) {
         <div style="margin-bottom:16px;">${summaryHtml}</div>
         ${sourcesHtml ? `<div style="margin-bottom:20px;">${sourcesHtml}</div>` : ''}
         <div style="padding:14px 18px;background:#0a0a0b;border-left:3px solid ${c.text};border-radius:0 8px 8px 0;margin-bottom:20px;">
-          <p style="font-size:13.5px;color:#e0e0e0;margin:0;line-height:1.8;font-family:'Golos Text',sans-serif;">${renderMarkup(item.signal, c.text, c.bg)}</p>
+          <p style="font-size:13.5px;color:#e0e0e0;margin:0;line-height:1.5;font-family:'Golos Text',sans-serif;">${renderMarkup(item.signal, c.text, c.bg)}</p>
         </div>
         <a href="${claudeDeepLink(item, data.edition)}" style="display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:#ffffff;background:transparent;border:1px solid #ffffff33;border-radius:8px;padding:7px 14px;text-decoration:none;letter-spacing:0.04em;font-family:'Golos Text',sans-serif;"><img src="https://cdn.simpleicons.org/claude/D97757" width="13" height="13" alt="Claude" style="display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0;">creuser avec claude →</a>
       </div>

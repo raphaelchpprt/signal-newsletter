@@ -15,18 +15,14 @@ const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const RESEND_KEY = process.env.RESEND_API_KEY;
 
 const TAG_COLORS = {
-  frontend: { bg: '#160d2e', text: '#c084fc', border: '#6d28d9' }, // violet — UI, design, créativité
-  ia: { bg: '#001a0a', text: '#34d399', border: '#065f46' }, // vert émeraude — tech, futur, growth
+  frontend: { bg: '#160d2e', text: '#c084fc', border: '#6d28d9' },
+  ia: { bg: '#001a0a', text: '#34d399', border: '#065f46' },
   'perf & archi': { bg: '#001220', text: '#60a5fa', border: '#1d4ed8' },
   'tech & société': { bg: '#1c0a0a', text: '#f87171', border: '#991b1b' },
   opinion: { bg: '#1a1200', text: '#fbbf24', border: '#b45309' },
-  arch: { bg: '#001220', text: '#60a5fa', border: '#1d4ed8' }, // alias
-  geo: { bg: '#1c0a0a', text: '#f87171', border: '#991b1b' }, // alias
-  csrd: { bg: '#001220', text: '#60a5fa', border: '#1d4ed8' }, // fallback = arch
-  tooling: { bg: '#1a1200', text: '#fbbf24', border: '#b45309' }, // fallback = opinion
 };
 
-// ─── History ─────────────────────────────────────────────────────────────────
+// ─── History ──────────────────────────────────────────────────────────────────
 
 function loadHistory() {
   try {
@@ -42,16 +38,19 @@ function saveHistory(data, history) {
     date: data.date,
     titles: data.items.map((i) => i.title),
   };
-  const updated = [entry, ...history].slice(0, 4); // keep last 4 weeks
-  writeFileSync(HISTORY_PATH, JSON.stringify(updated, null, 2));
+  writeFileSync(
+    HISTORY_PATH,
+    JSON.stringify([entry, ...history].slice(0, 4), null, 2),
+  );
 }
 
 function historyContext(history) {
   if (!history.length) return '';
-  const lines = history
-    .map((h) => `#${h.edition}: ${h.titles.join(', ')}`)
-    .join(' | ');
-  return ' Sujets recents a eviter : ' + lines + '.';
+  return (
+    ' Sujets recents a eviter : ' +
+    history.map((h) => `#${h.edition}: ${h.titles.join(', ')}`).join(' | ') +
+    '.'
+  );
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -122,8 +121,8 @@ function parseJson(raw) {
   const cleaned = raw
     .replace(/```json\n?/g, '')
     .replace(/```\n?/g, '')
-    .replace(/[‘’ʼ]/g, "'")
-    .replace(/[“”]/g, '"')
+    .replace(/[''ʼ]/g, "'")
+    .replace(/[""]/g, '"')
     .trim();
   const extracted = (cleaned.match(/\{[\s\S]*\}/) || [])[0] || cleaned;
   try {
@@ -144,19 +143,43 @@ const SYSTEM_PROMPT = `Assistant de veille tech de Raphaël, dev front-end chez 
 
 MISSION : newsletter "Signal", 5 items exactement dans cet ordre :
 
-1. Front-end : JS/TS, React, librairies UI (shadcn, radix, headless...), frameworks (Remix, Next), tooling front
-2. IA pour devs : modèles, Claude Code, Cursor, Copilot, workflows IA
+1. Front-end : JS/TS, React, librairies UI (shadcn, radix, headless...), frameworks (Remix, Next), tooling front — tagColor: "frontend"
+2. IA pour devs : modèles, Claude Code, Cursor, Copilot, workflows IA — tagColor: "ia"
 3. Web perf & archi : performance, runtimes, patterns d'architecture, déploiement — tagColor: "perf & archi"
 4. Éthique & géopolitique tech : régulation IA, souveraineté numérique, CSRD/ESG, greentech, impacts sociétaux — tagColor: "tech & société"
-5. Opinion/Vision : un article opinioné qui prend position ou challenge un consensus tech/UX/UI/web. Style : "Is Frontend Dead?", best practices remises en question, nouveautés UX/UI analysées de façon critique. Sources : daily.dev, HN (news.ycombinator.com), thenewstack.io, arstechnica.com. Restitue la thèse de l'auteur et ce qu'elle implique pour Raphaël. Tag : "opinion", tagColor : "opinion".
+5. Opinion/Vision : un article opinioné qui prend position ou challenge un consensus tech/UX/UI/web. Style : "Is Frontend Dead?", best practices remises en question, nouveautés UX/UI analysées de façon critique. Sources : daily.dev, HN (news.ycombinator.com), thenewstack.io, arstechnica.com. Restitue la thèse de l'auteur et ce qu'elle implique pour Raphaël. — tagColor: "opinion"
 
 Pour chaque item :
 1. Recherche web — 7 derniers jours uniquement
-2. Résumé 2 paragraphes (
+2. Résumé 2 paragraphes (\n\n), ton direct, 1-2 phrases/§ max
 
-), ton direct, 1-2 phrases/§ max
+MISE EN VALEUR (stricte) :
+- **gras** : exactement 2x dans le résumé. Chiffre+contexte ou conclusion frappante. Pas de noms propres seuls.
+- ==surligné== : exactement 1x dans le résumé. La phrase la plus importante.
+- Signal : 1-2 phrases. 1 **gras** + 1 ==surligné== (takeaway actionnable).
 
-Langue : français correct avec apostrophes (l'IA, d'abord, c'est, qu'il).`;
+SOURCES AUTORISÉES : daily.dev, github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com, news.ycombinator.com.
+INTERDITS : SEO farms, nxcode.io, ryzlabs.com, Medium générique.
+
+Langue : français correct avec apostrophes (l'IA, d'abord, c'est, qu'il).
+
+FORMAT — JSON pur, sans texte ni backtick :
+{
+  "edition": <semaine>,
+  "date": "<date fr>",
+  "editorial": "<1 phrase max 20 mots, fil rouge, **gras** et ==surligné== autorisés>",
+  "items": [{
+    "tag": "<frontend|ia|perf & archi|tech & société|opinion>",
+    "tagColor": "<frontend|ia|perf & archi|tech & société|opinion>",
+    "title": "<max 12 mots>",
+    "summary": "<2§ \n\n, 1-2 phrases/§, 2x **gras**, 1x ==surligné==>",
+    "signal": "<1-2 phrases, 1x **gras**, 1x ==surligné==>",
+    "imageUrl": "<url ou null>",
+    "sources": [{ "label": "<nom>", "url": "<url>", "date": "<ex: 18 mars 2026>" }]
+  }]
+}`;
+
+// ─── Generation ───────────────────────────────────────────────────────────────
 
 async function generateNewsletter() {
   const history = loadHistory();
@@ -180,15 +203,12 @@ async function generateNewsletter() {
   if (!textBlock) throw new Error('No text block in response');
 
   const data = parseJson(textBlock.text);
-
   saveHistory(data, history);
-
   await Promise.all(
     data.items.map(async (item) => {
       item.imageUrl = await verifyImage(item.imageUrl);
     }),
   );
-
   return data;
 }
 
@@ -208,7 +228,7 @@ function allTopicsLink(data) {
 function buildHtml(data) {
   const itemsHtml = data.items
     .map((item, i) => {
-      const c = TAG_COLORS[item.tagColor] || TAG_COLORS.tooling;
+      const c = TAG_COLORS[item.tagColor] || TAG_COLORS.opinion;
       const num = String(i + 1).padStart(2, '0');
 
       const imageHtml = item.imageUrl
@@ -258,7 +278,8 @@ function buildHtml(data) {
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <meta name="color-scheme" content="dark">
   <title>Signal #${data.edition}</title>
-  <style>:root{color-scheme:dark;}body{background-color:#0a0a0b!important;color:#f0f0f0!important;font-family:'Golos Text',sans-serif;}</style>
+  <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>:root{color-scheme:dark;}body{background-color:#0a0a0b!important;color:#f0f0f0!important;}</style>
 </head>
 <body style="margin:0;padding:0;background:#0a0a0b;">
   <span style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${data.items
@@ -285,11 +306,12 @@ function buildHtml(data) {
     ${
       data.editorial
         ? `<div style="padding:20px 24px;background:#111113;border:1px solid #222226;border-radius:12px;margin-bottom:12px;">
-      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555;letter-spacing:0.15em;margin:0 0 10px;">cette semaine</p>
-      <p style="font-size:14px;color:#bbb;line-height:1.75;margin:0;">${renderMarkup(data.editorial, '#a78bfa', '#1a1035', true)}</p>
+      <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;letter-spacing:0.15em;margin:0 0 10px;">cette semaine</p>
+      <p style="font-size:14px;color:#bbb;line-height:1.75;margin:0;font-family:'Golos Text',Georgia,sans-serif;">${renderMarkup(data.editorial, '#a78bfa', '#1a1035', true)}</p>
     </div>`
         : ''
     }
+
     <div style="margin-bottom:12px;">${itemsHtml}</div>
 
     <div style="background:#111113;border:1px solid #222226;border-radius:12px;padding:24px 32px;text-align:center;">
@@ -323,30 +345,28 @@ async function sendEmail(html, edition) {
       html,
     }),
   });
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Resend error: ${res.status} ${err}`);
-  }
+  if (!res.ok)
+    throw new Error(`Resend error: ${res.status} ${await res.text()}`);
   const data = await res.json();
   console.log(`Email sent to ${RECIPIENT} — id: ${data.id}`);
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
+// ─── Mock data ────────────────────────────────────────────────────────────────
 
 const MOCK_DATA = {
   edition: 99,
   date: 'vendredi 21 mars 2026',
   editorial:
-    "==React Router v7 et shadcn/ui redefinissent le front-end== pendant que l'IA accelere partout — **une semaine de consolidation, pas de revolution**.",
+    "==React Router v7 et shadcn/ui redéfinissent le front-end== pendant que l'IA accélère partout — **une semaine de consolidation, pas de révolution**.",
   items: [
     {
       tag: 'frontend',
       tagColor: 'frontend',
       title: 'shadcn/ui v2 : composants serveur et nouvelles primitives',
       summary:
-        "shadcn/ui sort une mise a jour majeure avec des composants compatibles React Server Components.\n\n**Le catalogue passe a 47 composants** et introduit un nouveau systeme de theming via CSS variables. ==L'écosystème headless UI se standardise autour de Radix + shadcn.==",
+        "shadcn/ui sort une mise à jour majeure avec des composants compatibles React Server Components.\n\n**Le catalogue passe à 47 composants** et introduit un nouveau système de theming via CSS variables. ==L'écosystème headless UI se standardise autour de Radix + shadcn.==",
       signal:
-        "**Très pertinent pour Kiosk** — ==evalue l'adoption de shadcn pour les prochains composants du dashboard ESG==.",
+        "**Très pertinent pour Kiosk** — ==évalue l'adoption de shadcn pour les prochains composants du dashboard ESG==.",
       imageUrl: null,
       sources: [
         {
@@ -361,9 +381,9 @@ const MOCK_DATA = {
       tagColor: 'ia',
       title: 'Claude Code : les nouveaux workflows multi-agents en pratique',
       summary:
-        "Anthropic documente les patterns d'usage de Claude Code en mode multi-agents pour les refactos larges.\n\n**Les equipes qui utilisent des agents en parallele gagnent 3x en vitesse** sur les migrations de codebase. ==La frontiere entre dev et orchestrateur devient floue.==",
+        "Anthropic documente les patterns d'usage de Claude Code en mode multi-agents pour les refactos larges.\n\n**Les équipes qui utilisent des agents en parallèle gagnent 3x en vitesse** sur les migrations de codebase. ==La frontière entre dev et orchestrateur devient floue.==",
       signal:
-        '==Explore le mode agent de Claude Code pour les migrations TypeScript de Kiosk== — **le gain potentiel est significant**.',
+        '==Explore le mode agent de Claude Code pour les migrations TypeScript de Kiosk== — **le gain potentiel est significatif**.',
       imageUrl: null,
       sources: [
         {
@@ -378,9 +398,9 @@ const MOCK_DATA = {
       tagColor: 'perf & archi',
       title: 'Bun 2.0 : le runtime JS qui challenge Node sur tous les fronts',
       summary:
-        'Bun 2.0 sort avec des performances en hausse et une compatibilite Node.js quasi totale.\n\n**Les benchmarks montrent 4x plus rapide que Node** sur les taches I/O intensives. ==Le choix du runtime devient un vrai debat en 2026.==',
+        'Bun 2.0 sort avec des performances en hausse et une compatibilité Node.js quasi totale.\n\n**Les benchmarks montrent 4x plus rapide que Node** sur les tâches I/O intensives. ==Le choix du runtime devient un vrai débat en 2026.==',
       signal:
-        "**Pas d'urgence de migrer Kiosk** — mais ==surveille la compatibilite Remix + Bun pour une future evaluation==.",
+        "**Pas d'urgence de migrer Kiosk** — mais ==surveille la compatibilité Remix + Bun pour une future évaluation==.",
       imageUrl: null,
       sources: [
         { label: 'bun.sh', url: 'https://bun.sh', date: '17 mars 2026' },
@@ -390,9 +410,9 @@ const MOCK_DATA = {
       tag: 'tech & société',
       tagColor: 'tech & société',
       title:
-        'EU AI Act : premieres sanctions et ce que ca change pour les SaaS',
+        'EU AI Act : premières sanctions et ce que ça change pour les SaaS',
       summary:
-        'Les premieres mises en conformite EU AI Act entrent en vigueur pour les systemes a haut risque.\n\n**Les SaaS B2B europeens ont 12 mois** pour documenter leurs systemes IA. ==La compliance IA devient un argument commercial, pas juste une contrainte.==',
+        'Les premières mises en conformité EU AI Act entrent en vigueur pour les systèmes à haut risque.\n\n**Les SaaS B2B européens ont 12 mois** pour documenter leurs systèmes IA. ==La compliance IA devient un argument commercial, pas juste une contrainte.==',
       signal:
         '==Anticipe une section IA dans le reporting Kiosk== — **les clients CSRD vont poser ces questions**.',
       imageUrl: null,
@@ -409,9 +429,9 @@ const MOCK_DATA = {
       tagColor: 'opinion',
       title: 'Le frontend est mort — vraiment ?',
       summary:
-        "Un article de Ahmed Amir sur daily.dev pose la question frontalement : le role du dev front-end est-il en train de disparaitre avec l'IA ?\n\n**L'auteur argumente que le front-end ne meurt pas, il se transforme** — de la syntaxe vers l'architecture et l'UX thinking. ==La valeur se deplace vers ceux qui comprennent pourquoi, pas juste comment.==",
+        "Un article d'Ahmed Amir sur daily.dev pose la question frontalement : le rôle du dev front-end est-il en train de disparaître avec l'IA ?\n\n**L'auteur argumente que le front-end ne meurt pas, il se transforme** — de la syntaxe vers l'architecture et l'UX thinking. ==La valeur se déplace vers ceux qui comprennent pourquoi, pas juste comment.==",
       signal:
-        "**C'est exactement ton positionnement** — ==cultive l'angle UX/architecture plutot que la maitrise syntaxique pure==.",
+        "**C'est exactement ton positionnement** — ==cultive l'angle UX/architecture plutôt que la maîtrise syntaxique pure==.",
       imageUrl: null,
       sources: [
         {
@@ -424,24 +444,24 @@ const MOCK_DATA = {
   ],
 };
 
+// ─── Main ─────────────────────────────────────────────────────────────────────
+
 async function main() {
   const isDryRun = process.argv.includes('--dry-run');
   const isSendPreview = process.argv.includes('--send-preview');
 
   if (isDryRun) {
-    const { writeFileSync } = await import('fs');
     writeFileSync('preview.html', buildHtml(MOCK_DATA));
     console.log('Preview saved to preview.html — open it in your browser.');
     return;
   }
 
   if (isSendPreview) {
-    const { readFileSync } = await import('fs');
-    const html = readFileSync('preview.html', 'utf8');
-    await sendEmail(html, 'test');
+    await sendEmail(readFileSync('preview.html', 'utf8'), 'test');
     console.log('Preview email sent.');
     return;
   }
+
   try {
     console.log('Starting Signal newsletter generation...');
     const data = await generateNewsletter();

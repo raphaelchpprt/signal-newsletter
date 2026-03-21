@@ -1,5 +1,4 @@
 import Anthropic from '@anthropic-ai/sdk';
-import nodemailer from 'nodemailer';
 import https from 'https';
 import http from 'http';
 import { readFileSync, writeFileSync } from 'fs';
@@ -12,9 +11,8 @@ const HISTORY_PATH = resolve(__dirname, '../history.json');
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const RECIPIENT = process.env.RECIPIENT_EMAIL;
-const SENDER_EMAIL = process.env.SENDER_EMAIL;
-const SENDER_PASS = process.env.SENDER_PASSWORD;
 const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+const RESEND_KEY = process.env.RESEND_API_KEY;
 
 const TAG_COLORS = {
   frontend: { bg: '#1a1035', text: '#a78bfa', border: '#4c1d95' },
@@ -145,9 +143,11 @@ function parseJson(raw) {
 
 const SYSTEM_PROMPT = `Assistant de veille tech de Raphaël, dev front-end chez Kiosk (meetkiosk.com, SaaS CSRD/ESG). Stack : Remix, React, TypeScript, Node.js. Outils : Linear, Claude Code, Cursor. Intérêts : JS/TS, IA pour devs, archi web, CSRD/ESG, éthique IA.
 
-MISSION : newsletter "Signal", 4 items exactement. Pour chaque item :
+MISSION : newsletter "Signal", 5 items. Pour chaque item :
 1. Recherche web — 7 derniers jours uniquement
 2. Résumé 2 paragraphes (\n\n), ton direct
+
+Le 5e item est toujours un article opinioné — quelqu'un qui prend position, challenge un consensus, ou questionne une direction tech/web/IA. Cherche des posts daily.dev, des billets de blog de devs connus, des threads HN (news.ycombinator.com) ou des articles sur thenewstack.io/arstechnica.com avec un angle critique. Le résumé doit restituer la thèse de l'auteur et ce qu'elle implique pour Raphaël.
 
 MISE EN VALEUR (stricte) :
 - **gras** : exactement 2x dans le résumé. Chiffre+contexte ("**90% continuent quand même**") ou conclusion frappante ("**le modèle compliance est mort**"). Pas de noms propres seuls.
@@ -172,7 +172,9 @@ FORMAT — JSON pur, sans texte ni backtick :
     "imageUrl": "<url image ou null>",
     "sources": [{ "label": "<nom>", "url": "<url>", "date": "<ex: 18 mars 2026>" }]
   }]
-}`;
+}
+
+Pour le 5e item opinioné, le tag peut être "opinion" et le tagColor "geo" (rouge discret).`;
 
 async function generateNewsletter() {
   const history = loadHistory();
@@ -181,7 +183,7 @@ async function generateNewsletter() {
 
   const response = await client.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 6000,
+    max_tokens: 8000,
     tools: [{ type: 'web_search_20250305', name: 'web_search' }],
     system: SYSTEM_PROMPT,
     messages: [
@@ -346,21 +348,25 @@ function buildHtml(data) {
 // ─── Email ────────────────────────────────────────────────────────────────────
 
 async function sendEmail(html, edition) {
-  const transporter = nodemailer.createTransport({
-    host: 'ssl0.ovh.net',
-    port: 465,
-    secure: true,
-    auth: { user: SENDER_EMAIL, pass: SENDER_PASS },
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'Signal Newsletter <signal@raphaelch.me>',
+      to: [RECIPIENT],
+      subject: `Signal #${edition} — Veille tech du vendredi`,
+      html,
+    }),
   });
-  const info = await transporter.sendMail({
-    from: `Signal Newsletter <${SENDER_EMAIL}>`,
-    to: RECIPIENT,
-    subject: `Signal #${edition} — Veille tech du vendredi`,
-    html,
-  });
-  console.log(
-    `Email sent to ${RECIPIENT} — messageId: ${info.messageId} — response: ${info.response}`,
-  );
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Resend error: ${res.status} ${err}`);
+  }
+  const data = await res.json();
+  console.log(`Email sent to ${RECIPIENT} — id: ${data.id}`);
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -440,10 +446,20 @@ const MOCK_DATA = {
 
 async function main() {
   const isDryRun = process.argv.includes('--dry-run');
+  const isSendPreview = process.argv.includes('--send-preview');
+
   if (isDryRun) {
     const { writeFileSync } = await import('fs');
     writeFileSync('preview.html', buildHtml(MOCK_DATA));
     console.log('Preview saved to preview.html — open it in your browser.');
+    return;
+  }
+
+  if (isSendPreview) {
+    const { readFileSync } = await import('fs');
+    const html = readFileSync('preview.html', 'utf8');
+    await sendEmail(html, 'test');
+    console.log('Preview email sent.');
     return;
   }
   try {

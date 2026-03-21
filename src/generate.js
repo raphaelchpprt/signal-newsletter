@@ -173,7 +173,7 @@ FORMAT — JSON pur, sans texte ni backtick :
     "tag": "<frontend|ia|perf & archi|tech & société|opinion>",
     "tagColor": "<frontend|ia|perf & archi|tech & société|opinion>",
     "title": "<max 12 mots>",
-    "summary": "<2§ \n\n, 1-2 phrases/§, 2x **gras**, 1x ==surligné==>",
+    "summary": "<2§ \n\n, 1 phrase/§ max (courte), 2x **gras**, 1x ==surligné==>",
     "signal": "<1-2 phrases, 1x **gras**, 1x ==surligné==>",
     "imageUrl": "<url ou null>",
     "sources": [{ "label": "<nom>", "url": "<url>", "date": "<ex: 18 mars 2026>" }]

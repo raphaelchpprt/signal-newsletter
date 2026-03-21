@@ -15,12 +15,15 @@ const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
 const RESEND_KEY = process.env.RESEND_API_KEY;
 
 const TAG_COLORS = {
-  frontend: { bg: '#1a1035', text: '#a78bfa', border: '#4c1d95' },
-  ia: { bg: '#0d2818', text: '#34d399', border: '#065f46' },
-  csrd: { bg: '#0c1a2e', text: '#60a5fa', border: '#1e3a5f' },
-  tooling: { bg: '#1f1200', text: '#fbbf24', border: '#92620a' },
-  arch: { bg: '#0f1f10', text: '#86efac', border: '#14532d' },
-  geo: { bg: '#200a0a', text: '#f87171', border: '#7f1d1d' },
+  frontend: { bg: '#160d2e', text: '#c084fc', border: '#6d28d9' }, // violet — UI, design, créativité
+  ia: { bg: '#001a0a', text: '#34d399', border: '#065f46' }, // vert émeraude — tech, futur, growth
+  'perf & archi': { bg: '#001220', text: '#60a5fa', border: '#1d4ed8' },
+  'tech & société': { bg: '#1c0a0a', text: '#f87171', border: '#991b1b' },
+  opinion: { bg: '#1a1200', text: '#fbbf24', border: '#b45309' },
+  arch: { bg: '#001220', text: '#60a5fa', border: '#1d4ed8' }, // alias
+  geo: { bg: '#1c0a0a', text: '#f87171', border: '#991b1b' }, // alias
+  csrd: { bg: '#001220', text: '#60a5fa', border: '#1d4ed8' }, // fallback = arch
+  tooling: { bg: '#1a1200', text: '#fbbf24', border: '#b45309' }, // fallback = opinion
 };
 
 // ─── History ─────────────────────────────────────────────────────────────────
@@ -74,7 +77,7 @@ function renderMarkup(text, color, bgColor, gradientHighlight = false) {
       /==(.+?)==/g,
       gradientHighlight
         ? `<mark style="background:linear-gradient(90deg,#0DFF5022,#096BDE22 40%,#8E47FE22 70%,#0DFF5022);color:#e0e0e0;padding:2px 6px;border-radius:3px;font-weight:500;border-bottom:1px solid #0DFF5066;">$1</mark>`
-        : `<mark style="background:${bgColor};color:${color};padding:1px 5px;border-radius:2px;">$1</mark>`,
+        : `<mark style="background:${bgColor};color:${color};padding:1px 6px;border-radius:5px;">$1</mark>`,
     )
     .replace(
       /\*\*(.+?)\*\*/g,
@@ -143,9 +146,9 @@ MISSION : newsletter "Signal", 5 items exactement dans cet ordre :
 
 1. Front-end : JS/TS, React, librairies UI (shadcn, radix, headless...), frameworks (Remix, Next), tooling front
 2. IA pour devs : modèles, Claude Code, Cursor, Copilot, workflows IA
-3. Web perf & archi : performance, runtimes, patterns d'architecture, déploiement
-4. Éthique & géopolitique tech : régulation IA, souveraineté numérique, CSRD/ESG, green & civic tech, impacts sociétaux
-5. Opinion/Vision : un article opinioné qui prend position ou challenge un consensus tech/UX/UI/web. Style : "Is Frontend Dead?", best practices remises en question, nouveautés UX/UI analysées de façon critique. Sources : daily.dev, HN (news.ycombinator.com), thenewstack.io, arstechnica.com. Restitue la thèse de l'auteur et ce qu'elle implique pour Raphaël. Tag : "opinion", tagColor : "geo".
+3. Web perf & archi : performance, runtimes, patterns d'architecture, déploiement — tagColor: "perf & archi"
+4. Éthique & géopolitique tech : régulation IA, souveraineté numérique, CSRD/ESG, greentech, impacts sociétaux — tagColor: "tech & société"
+5. Opinion/Vision : un article opinioné qui prend position ou challenge un consensus tech/UX/UI/web. Style : "Is Frontend Dead?", best practices remises en question, nouveautés UX/UI analysées de façon critique. Sources : daily.dev, HN (news.ycombinator.com), thenewstack.io, arstechnica.com. Restitue la thèse de l'auteur et ce qu'elle implique pour Raphaël. Tag : "opinion", tagColor : "opinion".
 
 Pour chaque item :
 1. Recherche web — 7 derniers jours uniquement
@@ -234,7 +237,7 @@ function buildHtml(data) {
       <div style="padding:24px 28px 28px;">
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
           <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#777;letter-spacing:0.15em;">${num}</span>
-          <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:3px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;font-family:'JetBrains Mono',monospace;">${item.tag}</span>
+          <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:${c.bg};color:${c.text};border:1px solid ${c.border};letter-spacing:0.12em;font-family:'JetBrains Mono',monospace;">${item.tag}</span>
         </div>
         <p style="font-size:20px;font-weight:600;color:#f5f5f5;margin:0 0 16px;line-height:1.25;letter-spacing:-0.02em;font-family:'Golos Text',sans-serif;">${item.title}</p>
         <div style="margin-bottom:16px;">${summaryHtml}</div>
@@ -242,7 +245,7 @@ function buildHtml(data) {
         <div style="padding:14px 18px;background:#0a0a0b;border-left:3px solid ${c.text};border-radius:0 8px 8px 0;margin-bottom:20px;">
           <p style="font-size:13.5px;color:#e0e0e0;margin:0;line-height:1.8;font-family:'Golos Text',sans-serif;">${renderMarkup(item.signal, c.text, c.bg)}</p>
         </div>
-        <a href="${claudeDeepLink(item, data.edition)}" style="display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:#ffffff;background:transparent;border:1px solid #ffffff44;border-radius:4px;padding:7px 14px;text-decoration:none;letter-spacing:0.04em;font-family:'Golos Text',sans-serif;"><img src="https://cdn.simpleicons.org/claude/D97757" width="13" height="13" alt="Claude" style="display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0;">creuser avec claude →</a>
+        <a href="${claudeDeepLink(item, data.edition)}" style="display:inline-flex;align-items:center;font-size:11px;font-weight:600;color:#ffffff;background:transparent;border:1px solid #ffffff33;border-radius:8px;padding:7px 14px;text-decoration:none;letter-spacing:0.04em;font-family:'Golos Text',sans-serif;"><img src="https://cdn.simpleicons.org/claude/D97757" width="13" height="13" alt="Claude" style="display:inline-block;vertical-align:middle;margin-right:6px;flex-shrink:0;">creuser avec claude →</a>
       </div>
     </div>`;
     })
@@ -272,7 +275,7 @@ function buildHtml(data) {
         </div>
         <div style="text-align:right;padding-top:4px;">
           <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;margin:0 0 4px;">${data.date}</p>
-          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#777;margin:0;">${data.items.length} items</p>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#777;margin:0;">édition hebdo</p>
         </div>
       </div>
     </div>
@@ -291,7 +294,7 @@ function buildHtml(data) {
 
     <div style="background:#111113;border:1px solid #222226;border-radius:12px;padding:24px 32px;text-align:center;">
       <p style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;letter-spacing:0.15em;margin:0 0 16px;">aller plus loin</p>
-      <a href="${allTopicsLink(data)}" style="display:inline-block;font-size:12px;font-weight:700;color:#0a0a0b;background:#f0f0f0;border-radius:3px;padding:12px 28px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;">discuter avec claude →</a>
+      <a href="${allTopicsLink(data)}" style="display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#ffffff;background:#000000;border-radius:10px;padding:12px 28px;text-decoration:none;letter-spacing:0.06em;font-family:'Golos Text',sans-serif;box-shadow:0 0 0 1.5px #0DFF5088,0 0 16px #0DFF5055,0 0 32px #096BDE44,0 0 48px #8E47FE22;"><img src="https://cdn.simpleicons.org/claude/D97757" width="14" height="14" alt="Claude" style="display:inline-block;vertical-align:middle;flex-shrink:0;">discuter avec claude →</a>
     </div>
 
     <div style="padding-top:24px;text-align:center;">
@@ -371,8 +374,8 @@ const MOCK_DATA = {
       ],
     },
     {
-      tag: 'arch',
-      tagColor: 'arch',
+      tag: 'perf & archi',
+      tagColor: 'perf & archi',
       title: 'Bun 2.0 : le runtime JS qui challenge Node sur tous les fronts',
       summary:
         'Bun 2.0 sort avec des performances en hausse et une compatibilite Node.js quasi totale.\n\n**Les benchmarks montrent 4x plus rapide que Node** sur les taches I/O intensives. ==Le choix du runtime devient un vrai debat en 2026.==',
@@ -384,8 +387,8 @@ const MOCK_DATA = {
       ],
     },
     {
-      tag: 'geo',
-      tagColor: 'geo',
+      tag: 'tech & société',
+      tagColor: 'tech & société',
       title:
         'EU AI Act : premieres sanctions et ce que ca change pour les SaaS',
       summary:
@@ -403,7 +406,7 @@ const MOCK_DATA = {
     },
     {
       tag: 'opinion',
-      tagColor: 'geo',
+      tagColor: 'opinion',
       title: 'Le frontend est mort — vraiment ?',
       summary:
         "Un article de Ahmed Amir sur daily.dev pose la question frontalement : le role du dev front-end est-il en train de disparaitre avec l'IA ?\n\n**L'auteur argumente que le front-end ne meurt pas, il se transforme** — de la syntaxe vers l'architecture et l'UX thinking. ==La valeur se deplace vers ceux qui comprennent pourquoi, pas juste comment.==",

@@ -46,13 +46,9 @@ function saveHistory(data, history) {
 function historyContext(history) {
   if (!history.length) return '';
   const lines = history
-    .map((h) => `- Edition #${h.edition} (${h.date}) : ${h.titles.join(' / ')}`)
-    .join('\n');
-  return (
-    '\nEditions precedentes (evite les memes sujets, fais des references si pertinent) :\n' +
-    lines +
-    '\n'
-  );
+    .map((h) => `#${h.edition}: ${h.titles.join(', ')}`)
+    .join(' | ');
+  return ' Sujets recents a eviter : ' + lines + '.';
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -143,39 +139,21 @@ function parseJson(raw) {
 
 const SYSTEM_PROMPT = `Assistant de veille tech de Raphaël, dev front-end chez Kiosk (meetkiosk.com, SaaS CSRD/ESG). Stack : Remix, React, TypeScript, Node.js. Outils : Linear, Claude Code, Cursor. Intérêts : JS/TS, IA pour devs, archi web, CSRD/ESG, éthique IA.
 
-MISSION : newsletter "Signal", 5 items. Pour chaque item :
+MISSION : newsletter "Signal", 5 items exactement dans cet ordre :
+
+1. Front-end : JS/TS, React, librairies UI (shadcn, radix, headless...), frameworks (Remix, Next), tooling front
+2. IA pour devs : modèles, Claude Code, Cursor, Copilot, workflows IA
+3. Web perf & archi : performance, runtimes, patterns d'architecture, déploiement
+4. Éthique & géopolitique tech : régulation IA, souveraineté numérique, CSRD/ESG, green & civic tech, impacts sociétaux
+5. Opinion/Vision : un article opinioné qui prend position ou challenge un consensus tech/UX/UI/web. Style : "Is Frontend Dead?", best practices remises en question, nouveautés UX/UI analysées de façon critique. Sources : daily.dev, HN (news.ycombinator.com), thenewstack.io, arstechnica.com. Restitue la thèse de l'auteur et ce qu'elle implique pour Raphaël. Tag : "opinion", tagColor : "geo".
+
+Pour chaque item :
 1. Recherche web — 7 derniers jours uniquement
-2. Résumé 2 paragraphes (\n\n), ton direct
+2. Résumé 2 paragraphes (
 
-Le 5e item est toujours un article opinioné — quelqu'un qui prend position, challenge un consensus, ou questionne une direction tech/web/IA. Cherche des posts daily.dev, des billets de blog de devs connus, des threads HN (news.ycombinator.com) ou des articles sur thenewstack.io/arstechnica.com avec un angle critique. Le résumé doit restituer la thèse de l'auteur et ce qu'elle implique pour Raphaël.
+), ton direct, 1-2 phrases/§ max
 
-MISE EN VALEUR (stricte) :
-- **gras** : exactement 2x dans le résumé. Chiffre+contexte ("**90% continuent quand même**") ou conclusion frappante ("**le modèle compliance est mort**"). Pas de noms propres seuls.
-- ==surligné== : exactement 1x dans le résumé. La phrase la plus importante.
-- Signal : 2-3 phrases. 1 **gras** + 1 ==surligné== (takeaway actionnable).
-
-SOURCES AUTORISÉES : daily.dev, github.com/blog, devblogs.microsoft.com, react.dev/blog, remix.run/blog, vitejs.dev/blog, deno.com/blog, bun.sh/blog, thenewstack.io, web.dev, developer.chrome.com, anthropic.com/news, openai.com/blog, simonwillison.net, esgtoday.com, esgnews.com, efrag.org, consilium.europa.eu, techcrunch.com, wired.com, arstechnica.com, theverge.com, infoq.com.
-INTERDITS : SEO farms, nxcode.io, ryzlabs.com, Medium générique. Pas de source fiable → autre sujet.
-
-THÈMES (équilibrer) : JS/TS · IA pour devs · CSRD/ESG · web perf/archi · éthique/géopolitique tech
-
-FORMAT — JSON pur, sans texte ni backtick :
-{
-  "edition": <semaine>,
-  "date": "<date fr>",
-  "editorial": "<1 phrase max 20 mots, fil rouge de la semaine, **gras** et ==surligné== autorisés>",
-  "items": [{
-    "tag": "<catégorie>",
-    "tagColor": "<frontend|ia|csrd|tooling|arch|geo>",
-    "title": "<max 12 mots>",
-    "summary": "<2§ \n\n, 1-2 phrases/§ max, 2x **gras**, 1x ==surligné==>",
-    "signal": "<1-2 phrases, 1x **gras**, 1x ==surligné==>",
-    "imageUrl": "<url image ou null>",
-    "sources": [{ "label": "<nom>", "url": "<url>", "date": "<ex: 18 mars 2026>" }]
-  }]
-}
-
-Pour le 5e item opinioné, le tag peut être "opinion" et le tagColor "geo" (rouge discret).`;
+Langue : français correct avec apostrophes (l'IA, d'abord, c'est, qu'il).`;
 
 async function generateNewsletter() {
   const history = loadHistory();
@@ -219,8 +197,8 @@ function claudeDeepLink(item, edition) {
 }
 
 function allTopicsLink(data) {
-  const summary = data.items.map((i) => `- [${i.tag}] ${i.title}`).join('\n');
-  const prompt = `Signal #${data.edition} (${data.date}) :\n\n${summary}\n\nEn tant que dev front-end chez Kiosk (Remix + React + TypeScript, SaaS CSRD/ESG), quel sujet prioriser cette semaine ?`;
+  const titles = data.items.map((i) => i.title).join(' / ');
+  const prompt = `Signal #${data.edition} : ${titles}. Quel sujet prioriser — dev front-end Kiosk (Remix+React+TS, SaaS CSRD/ESG) ?`;
   return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
 }
 
@@ -239,7 +217,7 @@ function buildHtml(data) {
         .filter(Boolean)
         .map(
           (p) =>
-            `<p style="font-size:14px;color:#c0c0c0;line-height:2;margin:0 0 16px;font-family:'Golos Text',sans-serif;">${renderMarkup(p, c.text, c.bg)}</p>`,
+            `<p style="font-size:14px;color:#c0c0c0;line-height:1.5;margin:0 0 16px;font-family:'Golos Text',sans-serif;">${renderMarkup(p, c.text, c.bg)}</p>`,
         )
         .join('');
 
@@ -354,71 +332,89 @@ async function sendEmail(html, edition) {
 
 const MOCK_DATA = {
   edition: 99,
-  date: 'vendredi 20 mars 2026',
+  date: 'vendredi 21 mars 2026',
   editorial:
-    'Cette semaine, **les LLMs envahissent les IDEs** et la reglementation ESG se stabilise. ==Le stack JS/TS est en pleine recomposition== — une semaine dense.',
+    "==React Router v7 et shadcn/ui redefinissent le front-end== pendant que l'IA accelere partout — **une semaine de consolidation, pas de revolution**.",
   items: [
     {
       tag: 'frontend',
       tagColor: 'frontend',
-      title: 'Remix 3 drops React — bigger than it sounds',
+      title: 'shadcn/ui v2 : composants serveur et nouvelles primitives',
       summary:
-        'Remix v3 est une reecriture complete basee sur un fork de Preact.\n\n**90% des projets Remix existants** ne sont pas concernes par la migration immediate. ==React Router v7 reste l option recommandee.==',
+        "shadcn/ui sort une mise a jour majeure avec des composants compatibles React Server Components.\n\n**Le catalogue passe a 47 composants** et introduit un nouveau systeme de theming via CSS variables. ==L'écosystème headless UI se standardise autour de Radix + shadcn.==",
       signal:
-        'Kiosk tourne sur Remix v2. **Pas d urgence de migrer** — mais ==surveille React Router v7 pour les prochains sprints==.',
+        "**Très pertinent pour Kiosk** — ==evalue l'adoption de shadcn pour les prochains composants du dashboard ESG==.",
       imageUrl: null,
       sources: [
-        { label: 'remix.run', url: 'https://remix.run', date: '18 mars 2026' },
+        {
+          label: 'shadcn/ui',
+          url: 'https://ui.shadcn.com',
+          date: '19 mars 2026',
+        },
       ],
     },
     {
       tag: 'ia',
       tagColor: 'ia',
-      title: 'Claude Code vs Cursor — le bon workflow en 2026',
+      title: 'Claude Code : les nouveaux workflows multi-agents en pratique',
       summary:
-        'Les devs combinent les deux outils selon les phases.\n\n**Claude Code domine sur les refactos larges**. ==Cursor reste superieur pour l ecriture active au quotidien.==',
+        "Anthropic documente les patterns d'usage de Claude Code en mode multi-agents pour les refactos larges.\n\n**Les equipes qui utilisent des agents en parallele gagnent 3x en vitesse** sur les migrations de codebase. ==La frontiere entre dev et orchestrateur devient floue.==",
       signal:
-        '==Utilise Claude Code pour les gros chantiers Kiosk== — **la combinaison optimale** sur ton stack TypeScript.',
+        '==Explore le mode agent de Claude Code pour les migrations TypeScript de Kiosk== — **le gain potentiel est significant**.',
       imageUrl: null,
       sources: [
         {
           label: 'Anthropic',
-          url: 'https://anthropic.com',
-          date: '17 mars 2026',
+          url: 'https://anthropic.com/news',
+          date: '18 mars 2026',
         },
       ],
     },
     {
-      tag: 'csrd',
-      tagColor: 'csrd',
-      title: 'Post-Omnibus : 90% des entreprises continuent de reporter',
+      tag: 'arch',
+      tagColor: 'arch',
+      title: 'Bun 2.0 : le runtime JS qui challenge Node sur tous les fronts',
       summary:
-        'L Omnibus I a reduit le scope CSRD de ~85%.\n\n**90% des entreprises descoppees** maintiennent leur reporting ESG volontairement. ==La demande se deplace vers le value-driven.==',
+        'Bun 2.0 sort avec des performances en hausse et une compatibilite Node.js quasi totale.\n\n**Les benchmarks montrent 4x plus rapide que Node** sur les taches I/O intensives. ==Le choix du runtime devient un vrai debat en 2026.==',
       signal:
-        '**Bonne nouvelle pour Kiosk** — le marche reste fort. ==Repositionne le messaging vers la valeur business==.',
+        "**Pas d'urgence de migrer Kiosk** — mais ==surveille la compatibilite Remix + Bun pour une future evaluation==.",
+      imageUrl: null,
+      sources: [
+        { label: 'bun.sh', url: 'https://bun.sh', date: '17 mars 2026' },
+      ],
+    },
+    {
+      tag: 'geo',
+      tagColor: 'geo',
+      title:
+        'EU AI Act : premieres sanctions et ce que ca change pour les SaaS',
+      summary:
+        'Les premieres mises en conformite EU AI Act entrent en vigueur pour les systemes a haut risque.\n\n**Les SaaS B2B europeens ont 12 mois** pour documenter leurs systemes IA. ==La compliance IA devient un argument commercial, pas juste une contrainte.==',
+      signal:
+        '==Anticipe une section IA dans le reporting Kiosk== — **les clients CSRD vont poser ces questions**.',
       imageUrl: null,
       sources: [
         {
-          label: 'ESG Today',
-          url: 'https://esgtoday.com',
+          label: 'consilium.europa.eu',
+          url: 'https://consilium.europa.eu',
           date: '16 mars 2026',
         },
       ],
     },
     {
-      tag: 'tooling',
-      tagColor: 'tooling',
-      title: 'TypeScript Native Preview — compilateur 10x plus rapide',
+      tag: 'opinion',
+      tagColor: 'geo',
+      title: 'Le frontend est mort — vraiment ?',
       summary:
-        'Microsoft a publie un compilateur TypeScript reecrit en Go.\n\n**Les benchmarks montrent 10x de gain** sur les gros projets. ==Le DX TypeScript va changer radicalement en 2026.==',
+        "Un article de Ahmed Amir sur daily.dev pose la question frontalement : le role du dev front-end est-il en train de disparaitre avec l'IA ?\n\n**L'auteur argumente que le front-end ne meurt pas, il se transforme** — de la syntaxe vers l'architecture et l'UX thinking. ==La valeur se deplace vers ceux qui comprennent pourquoi, pas juste comment.==",
       signal:
-        'Sur Kiosk, ==teste la preview des que stable== — **le gain sur les build times** sera immediat.',
+        "**C'est exactement ton positionnement** — ==cultive l'angle UX/architecture plutot que la maitrise syntaxique pure==.",
       imageUrl: null,
       sources: [
         {
-          label: 'devblogs.microsoft.com',
-          url: 'https://devblogs.microsoft.com',
-          date: '15 mars 2026',
+          label: 'daily.dev',
+          url: 'https://app.daily.dev/posts/is-frontend-dead-the-evolution-you-can-t-ignore-xuptirt4j',
+          date: '20 mars 2026',
         },
       ],
     },

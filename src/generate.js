@@ -162,6 +162,7 @@ SOURCES AUTORISÉES : daily.dev, github.com/blog, devblogs.microsoft.com, react.
 INTERDITS : SEO farms, nxcode.io, ryzlabs.com, Medium générique.
 
 Langue : français correct avec apostrophes (l'IA, d'abord, c'est, qu'il).
+IMPORTANT : n'utilise JAMAIS de HTML (<p>, <strong>, <em>, etc.) dans les valeurs JSON. Utilise uniquement **gras** et ==surligné== pour le markup.
 
 FORMAT — JSON pur, sans texte ni backtick :
 {
@@ -202,7 +203,28 @@ async function generateNewsletter() {
   const textBlock = response.content.filter((b) => b.type === 'text').pop();
   if (!textBlock) throw new Error('No text block in response');
 
-  const data = parseJson(textBlock.text);
+  let data;
+  try {
+    data = parseJson(textBlock.text);
+  } catch (e) {
+    console.warn('JSON parse failed, retrying...');
+    const retry = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 8000,
+      system: SYSTEM_PROMPT,
+      messages: [
+        {
+          role: 'user',
+          content:
+            'Regenere le JSON de la newsletter Signal. Uniquement le JSON brut valide, sans HTML, sans texte autour.',
+        },
+      ],
+    });
+    const retryBlock = retry.content.filter((b) => b.type === 'text').pop();
+    if (!retryBlock) throw new Error('No text block in retry response');
+    data = parseJson(retryBlock.text);
+  }
+
   saveHistory(data, history);
   await Promise.all(
     data.items.map(async (item) => {

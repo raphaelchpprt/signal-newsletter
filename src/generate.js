@@ -168,7 +168,7 @@ FORMAT — JSON pur, sans texte ni backtick :
 {
   "edition": <semaine>,
   "date": "<date fr>",
-  "editorial": "<1 phrase max 20 mots, fil rouge, **gras** et ==surligné== autorisés>",
+  "editorial": "<3-4 phrases max, fil rouge, **gras** et ==surligné== autorisés>",
   "items": [{
     "tag": "<frontend|ia|perf & archi|tech & société|opinion>",
     "tagColor": "<frontend|ia|perf & archi|tech & société|opinion>",
@@ -379,7 +379,7 @@ const MOCK_DATA = {
   edition: 99,
   date: 'vendredi 21 mars 2026',
   editorial:
-    "==React Router v7 et shadcn/ui redéfinissent le front-end== pendant que l'IA accélère partout — **une semaine de consolidation, pas de révolution**.",
+    "Cette semaine, le fil rouge est clair : ==le front-end se structure autour des stacks modulaires et du server-first==. React Router v7 et shadcn/ui confirment la tendance. **L'IA pour devs ne ralentit pas** — les workflows multi-agents deviennent la norme pour les grosses refactos. Une édition de consolidation plutôt que de rupture.",
   items: [
     {
       tag: 'frontend',

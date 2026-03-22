@@ -55,10 +55,10 @@ function historyContext(history) {
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function weekNumber() {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 1);
-  return Math.ceil(((now - start) / 86400000 + start.getDay() + 1) / 7);
+/** Prochain numéro d'édition : compteur séquentiel (1, 2, 3…) d'après history.json */
+function nextEditionNumber(history) {
+  if (!history.length) return 1;
+  return Math.max(...history.map((h) => Number(h.edition) || 0)) + 1;
 }
 
 function frenchDate() {
@@ -166,7 +166,7 @@ IMPORTANT : n'utilise JAMAIS de HTML (<p>, <strong>, <em>, etc.) dans les valeur
 
 FORMAT — JSON pur, sans texte ni backtick :
 {
-  "edition": <semaine>,
+  "edition": <numéro séquentiel 1, 2, 3… — celui du message utilisateur>,
   "date": "<date fr>",
   "editorial": "<3-4 phrases max, fil rouge, **gras** et ==surligné== autorisés>",
   "items": [{
@@ -184,6 +184,7 @@ FORMAT — JSON pur, sans texte ni backtick :
 
 async function generateNewsletter() {
   const history = loadHistory();
+  const edition = nextEditionNumber(history);
   const client = new Anthropic({ apiKey: ANTHROPIC_KEY });
   console.log('Calling Claude with web search...');
 
@@ -195,7 +196,7 @@ async function generateNewsletter() {
     messages: [
       {
         role: 'user',
-        content: `Génère l'édition #${weekNumber()} de Signal pour le ${frenchDate()}. Actus des 7 derniers jours uniquement.${historyContext(history)} IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après.`,
+        content: `Génère l'édition #${edition} de Signal pour le ${frenchDate()}. Actus des 7 derniers jours uniquement.${historyContext(history)} IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après.`,
       },
     ],
   });
@@ -215,8 +216,7 @@ async function generateNewsletter() {
       messages: [
         {
           role: 'user',
-          content:
-            'Regenere le JSON de la newsletter Signal. Uniquement le JSON brut valide, sans HTML, sans texte autour.',
+          content: `Régénère le JSON de la newsletter Signal pour l'édition #${edition}. Uniquement le JSON brut valide, sans HTML, sans texte autour.`,
         },
       ],
     });
@@ -224,6 +224,8 @@ async function generateNewsletter() {
     if (!retryBlock) throw new Error('No text block in retry response');
     data = parseJson(retryBlock.text);
   }
+
+  data.edition = edition;
 
   saveHistory(data, history);
   await Promise.all(

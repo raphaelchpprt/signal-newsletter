@@ -3,6 +3,7 @@ import nodemailer from 'nodemailer';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { normalizeMarkupDelimiters } from './markup.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HISTORY_PATH = resolve(__dirname, '../history.json');
@@ -61,6 +62,7 @@ Pour chaque tendance :
 - Ce que ça implique concrètement pour Raphaël dans les semaines à venir
 
 Règles de mise en valeur (strictes) :
+- Syntaxe : si tu ouvres avec ** tu fermes avec ** ; si tu ouvres avec == tu fermes avec ==. Jamais ==…** ni **…==.
 - **gras** : 1 seul chiffre+contexte ou conclusion frappante par tendance
 - ==surligné== : 1 seule phrase — le takeaway le plus important de la tendance
 
@@ -97,7 +99,7 @@ IMPORTANT : réponds UNIQUEMENT avec le JSON brut, sans texte avant ou après, s
 // ─── HTML ─────────────────────────────────────────────────────────────────────
 
 function renderMarkup(text) {
-  return (text || '')
+  return normalizeMarkupDelimiters(text || '')
     .replace(
       /==(.+?)==/g,
       `<mark style="background:#1a1035;color:#a78bfa;padding:1px 5px;border-radius:2px;">$1</mark>`,

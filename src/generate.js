@@ -4,6 +4,7 @@ import http from 'http';
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { normalizeMarkupDelimiters } from './markup.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const HISTORY_PATH = resolve(__dirname, '../history.json');
@@ -71,7 +72,7 @@ function frenchDate() {
 }
 
 function renderMarkup(text, color, bgColor, gradientHighlight = false) {
-  return (text || '')
+  return normalizeMarkupDelimiters(text || '')
     .replace(
       /==(.+?)==/g,
       gradientHighlight
@@ -154,6 +155,7 @@ Pour chaque item :
 2. Résumé 2 paragraphes (\n\n), ton direct, 1-2 phrases/§ max
 
 MISE EN VALEUR (stricte) :
+- Syntaxe des délimiteurs : si tu ouvres avec ** tu fermes avec ** uniquement ; si tu ouvres avec == tu fermes avec == uniquement. Jamais ==…** ni **…== (erreur fréquente à éviter absolument).
 - **gras** : exactement 2x dans le résumé. Chiffre+contexte ou conclusion frappante. Pas de noms propres seuls.
 - ==surligné== : exactement 1x dans le résumé. La phrase la plus importante.
 - Signal : 1-2 phrases. 1 **gras** + 1 ==surligné== (takeaway actionnable).
@@ -168,7 +170,7 @@ FORMAT — JSON pur, sans texte ni backtick :
 {
   "edition": <numéro séquentiel 1, 2, 3… — celui du message utilisateur>,
   "date": "<date fr>",
-  "editorial": "<3-4 phrases max, fil rouge, **gras** et ==surligné== autorisés>",
+  "editorial": "<3 phrases max, fil rouge, **gras** et ==surligné== autorisés — délimiteurs toujours appariés (==…== ou **…**)>",
   "items": [{
     "tag": "<frontend|ia|perf & archi|tech & société|opinion>",
     "tagColor": "<frontend|ia|perf & archi|tech & société|opinion>",

@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "edition": 1,
+    "date": "27 mars 2026",
+    "titles": [
+      "Next.js 16.2 : le framework devient agent-ready",
+      "Claude Code vs Cursor : fin du débat, place à la complémentarité",
+      "Cloudflare 2026 : la sécurité edge devient architecture par défaut",
+      "Omnibus CSRD entré en vigueur : le marché ESG se recompose",
+      "Le vibe coding est mort, vive l'« agentic engineering »"
+    ]
+  }
+]

@@ -1,5 +1,16 @@
 [
   {
+    "edition": 2,
+    "date": "3 avril 2026",
+    "titles": [
+      "TypeScript 6.0 stable : le dernier JS, le pont vers Go",
+      "Claude Code : adoption ×6 en un an, loyauté record",
+      "WebAssembly dépasse les containers à l'edge — et ce n'est que le début",
+      "Digital Omnibus IA : l'Europe affaiblit sa propre régulation",
+      "Les LLMs poussent du React partout — et c'est un problème"
+    ]
+  },
+  {
     "edition": 1,
     "date": "27 mars 2026",
     "titles": [

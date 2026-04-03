@@ -1,5 +1,4 @@
 import Anthropic from '@anthropic-ai/sdk';
-import nodemailer from 'nodemailer';
 import { readFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -9,8 +8,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const HISTORY_PATH = resolve(__dirname, '../history.json');
 
 const RECIPIENT = process.env.RECIPIENT_EMAIL;
-const SENDER_EMAIL = process.env.SENDER_EMAIL;
-const SENDER_PASS = process.env.SENDER_PASSWORD;
+const ANTHROPIC_KEY = process.env.ANTHROPIC_API_KEY;
+const RESEND_KEY = process.env.RESEND_API_KEY;
 
 // ─── Load last 4 editions from history ────────────────────────────────────────
 
@@ -33,7 +32,7 @@ function currentMonth() {
 // ─── Claude — no web search, pure synthesis ───────────────────────────────────
 
 async function generateDigest(editions) {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  const client = new Anthropic({ apiKey: ANTHROPIC_KEY });
 
   const editionsText = editions
     .map(
@@ -181,19 +180,23 @@ function buildDigestHtml(data) {
 // ─── Email ────────────────────────────────────────────────────────────────────
 
 async function sendEmail(html, month) {
-  const transporter = nodemailer.createTransport({
-    host: 'ssl0.ovh.net',
-    port: 465,
-    secure: true,
-    auth: { user: SENDER_EMAIL, pass: SENDER_PASS },
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${RESEND_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'Signal Newsletter <signal@raphaelch.me>',
+      to: [RECIPIENT],
+      subject: `Signal Digest — Tendances de ${month}`,
+      html,
+    }),
   });
-  await transporter.sendMail({
-    from: `Signal Newsletter <${SENDER_EMAIL}>`,
-    to: RECIPIENT,
-    subject: `Signal Digest — Tendances de ${month}`,
-    html,
-  });
-  console.log(`Digest sent to ${RECIPIENT}`);
+  if (!res.ok)
+    throw new Error(`Resend error: ${res.status} ${await res.text()}`);
+  const data = await res.json();
+  console.log(`Digest sent to ${RECIPIENT} — id: ${data.id}`);
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────

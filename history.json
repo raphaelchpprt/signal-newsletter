@@ -1,5 +1,16 @@
 [
   {
+    "edition": 3,
+    "date": "10 avril 2026",
+    "titles": [
+      "TanStack AI Code Mode : l'IA écrit des programmes, pas des appels d'outils",
+      "Claude Mythos Preview : trop puissant pour être publié",
+      "L'edge computing réduit le TTFB de 60 à 80 % — à condition de ne pas tout migrer",
+      "Digital Omnibus IA : l'UE affaiblit l'AI Act et le RGPD au nom de la compétitivité",
+      "« J'ai commencé à perdre ma capacité à coder » — le vrai coût des outils IA"
+    ]
+  },
+  {
     "edition": 2,
     "date": "3 avril 2026",
     "titles": [

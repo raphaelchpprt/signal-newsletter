@@ -1,5 +1,16 @@
 [
   {
+    "edition": 4,
+    "date": "17 avril 2026",
+    "titles": [
+      "shadcn s'émancipe de Radix : Base UI entre dans la danse",
+      "JetBrains : l'IA redistribue le travail, les devs ne le voient pas",
+      "WebGPU en production universelle : ce que ça change pour les SaaS",
+      "EU AI Act : le 2 août approche, mais les standards ne sont pas prêts",
+      "« React Component Pyramid Scheme » : l'obsession de la réutilisabilité nous coûte cher"
+    ]
+  },
+  {
     "edition": 3,
     "date": "10 avril 2026",
     "titles": [

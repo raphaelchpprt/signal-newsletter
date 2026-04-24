@@ -1,5 +1,16 @@
 [
   {
+    "edition": 5,
+    "date": "vendredi 24 avril 2026",
+    "titles": [
+      "Vite 8 stable : Rolldown remplace tout, les builds explosent",
+      "GitHub Copilot gèle ses inscriptions : les agents brisent l'économie du forfait",
+      "Bun 2.0 stable : le runtime JS qui casse les benchmarks serverless",
+      "Omnibus I CSRD en vigueur : le marché ESG recalibré au 18 mars",
+      "L'IA impose React partout — et c'est un problème pour le web"
+    ]
+  },
+  {
     "edition": 4,
     "date": "17 avril 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "WebAssembly dépasse les containers à l'edge — et ce n'est que le début",
       "Digital Omnibus IA : l'Europe affaiblit sa propre régulation",
       "Les LLMs poussent du React partout — et c'est un problème"
-    ]
-  },
-  {
-    "edition": 1,
-    "date": "27 mars 2026",
-    "titles": [
-      "Next.js 16.2 : le framework devient agent-ready",
-      "Claude Code vs Cursor : fin du débat, place à la complémentarité",
-      "Cloudflare 2026 : la sécurité edge devient architecture par défaut",
-      "Omnibus CSRD entré en vigueur : le marché ESG se recompose",
-      "Le vibe coding est mort, vive l'« agentic engineering »"
     ]
   }
 ]

@@ -1,5 +1,16 @@
 [
   {
+    "edition": 6,
+    "date": "1er mai 2026",
+    "titles": [
+      "React Compiler : 18 mois après, le vrai bilan",
+      "IBM Bob GA et Copilot passe au billing token : l'IA dev se recalibrate",
+      "HTTP/3 et server-first : l'architecture web par défaut en 2026",
+      "Post-Omnibus CSRD : la supply chain devient le vrai régulateur ESG",
+      "84 % utilisent l'IA, 29 % font confiance au code livré : le vrai gap"
+    ]
+  },
+  {
     "edition": 5,
     "date": "vendredi 24 avril 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "L'edge computing réduit le TTFB de 60 à 80 % — à condition de ne pas tout migrer",
       "Digital Omnibus IA : l'UE affaiblit l'AI Act et le RGPD au nom de la compétitivité",
       "« J'ai commencé à perdre ma capacité à coder » — le vrai coût des outils IA"
-    ]
-  },
-  {
-    "edition": 2,
-    "date": "3 avril 2026",
-    "titles": [
-      "TypeScript 6.0 stable : le dernier JS, le pont vers Go",
-      "Claude Code : adoption ×6 en un an, loyauté record",
-      "WebAssembly dépasse les containers à l'edge — et ce n'est que le début",
-      "Digital Omnibus IA : l'Europe affaiblit sa propre régulation",
-      "Les LLMs poussent du React partout — et c'est un problème"
     ]
   }
 ]

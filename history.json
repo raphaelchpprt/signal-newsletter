@@ -1,5 +1,16 @@
 [
   {
+    "edition": 7,
+    "date": "8 mai 2026",
+    "titles": [
+      "TypeScript 7.0 bêta : le compilateur passe en Go",
+      "Code w/ Claude 2026 : Routines, Managed Agents et compute illimité",
+      "React Foundation : gouvernance neutre sous la Linux Foundation",
+      "Anthropic loue Colossus 1 à SpaceX : 300 MW, bilan carbone ignoré",
+      "\"L'IA accélère le code, pas la livraison\" — le mythe de la vélocité"
+    ]
+  },
+  {
     "edition": 6,
     "date": "1er mai 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "WebGPU en production universelle : ce que ça change pour les SaaS",
       "EU AI Act : le 2 août approche, mais les standards ne sont pas prêts",
       "« React Component Pyramid Scheme » : l'obsession de la réutilisabilité nous coûte cher"
-    ]
-  },
-  {
-    "edition": 3,
-    "date": "10 avril 2026",
-    "titles": [
-      "TanStack AI Code Mode : l'IA écrit des programmes, pas des appels d'outils",
-      "Claude Mythos Preview : trop puissant pour être publié",
-      "L'edge computing réduit le TTFB de 60 à 80 % — à condition de ne pas tout migrer",
-      "Digital Omnibus IA : l'UE affaiblit l'AI Act et le RGPD au nom de la compétitivité",
-      "« J'ai commencé à perdre ma capacité à coder » — le vrai coût des outils IA"
     ]
   }
 ]

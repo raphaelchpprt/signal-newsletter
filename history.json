@@ -1,5 +1,16 @@
 [
   {
+    "edition": 8,
+    "date": "15 mai 2026",
+    "titles": [
+      "Remix 3 bêta : rupture totale avec React, pari sur les standards web",
+      "Claude Code seul au sommet : le stack IA dev se clarifie enfin",
+      "WebAssembly dépasse les containers à l'edge : le Component Model comme pivot",
+      "EU AI Act pleine application le 2 août : 78 jours pour les systèmes à haut risque",
+      "Vibe coding a un problème d'UX — et c'est un danger pour la prod"
+    ]
+  },
+  {
     "edition": 7,
     "date": "8 mai 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Bun 2.0 stable : le runtime JS qui casse les benchmarks serverless",
       "Omnibus I CSRD en vigueur : le marché ESG recalibré au 18 mars",
       "L'IA impose React partout — et c'est un problème pour le web"
-    ]
-  },
-  {
-    "edition": 4,
-    "date": "17 avril 2026",
-    "titles": [
-      "shadcn s'émancipe de Radix : Base UI entre dans la danse",
-      "JetBrains : l'IA redistribue le travail, les devs ne le voient pas",
-      "WebGPU en production universelle : ce que ça change pour les SaaS",
-      "EU AI Act : le 2 août approche, mais les standards ne sont pas prêts",
-      "« React Component Pyramid Scheme » : l'obsession de la réutilisabilité nous coûte cher"
     ]
   }
 ]

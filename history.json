@@ -1,5 +1,16 @@
 [
   {
+    "edition": 9,
+    "date": "22 mai 2026",
+    "titles": [
+      "shadcn/ui + TanStack Start : le duo s'impose comme alternative crédible à Next.js",
+      "Google Antigravity 2.0 : Google entre dans la bataille des agents, par effraction",
+      "MCP s'impose comme le standard de connectivité des agents : 97M de téléchargements mensuels",
+      "AI Act Omnibus : accord politique le 7 mai, les délais hauts risques repoussés à décembre 2027",
+      "L'UX de Google Antigravity 2.0 : quand l'agent-first détruit la confiance utilisateur"
+    ]
+  },
+  {
     "edition": 8,
     "date": "15 mai 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "HTTP/3 et server-first : l'architecture web par défaut en 2026",
       "Post-Omnibus CSRD : la supply chain devient le vrai régulateur ESG",
       "84 % utilisent l'IA, 29 % font confiance au code livré : le vrai gap"
-    ]
-  },
-  {
-    "edition": 5,
-    "date": "vendredi 24 avril 2026",
-    "titles": [
-      "Vite 8 stable : Rolldown remplace tout, les builds explosent",
-      "GitHub Copilot gèle ses inscriptions : les agents brisent l'économie du forfait",
-      "Bun 2.0 stable : le runtime JS qui casse les benchmarks serverless",
-      "Omnibus I CSRD en vigueur : le marché ESG recalibré au 18 mars",
-      "L'IA impose React partout — et c'est un problème pour le web"
     ]
   }
 ]

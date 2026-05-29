@@ -1,5 +1,16 @@
 [
   {
+    "edition": 10,
+    "date": "29 mai 2026",
+    "titles": [
+      "Storybook intègre TanStack React et l'agentic setup",
+      "Cursor 3.0 vs Claude Code : la guerre des agents éclate",
+      "Google I/O 2026 : WebMCP et Chrome DevTools pour agents redéfinissent le web agentique",
+      "Souveraineté numérique EU : le paquet Tech Sovereignty change les règles pour le SaaS",
+      "\"L'IA ne va pas accélérer la livraison logicielle — rien ne l'a jamais fait\""
+    ]
+  },
+  {
     "edition": 9,
     "date": "22 mai 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "React Foundation : gouvernance neutre sous la Linux Foundation",
       "Anthropic loue Colossus 1 à SpaceX : 300 MW, bilan carbone ignoré",
       "\"L'IA accélère le code, pas la livraison\" — le mythe de la vélocité"
-    ]
-  },
-  {
-    "edition": 6,
-    "date": "1er mai 2026",
-    "titles": [
-      "React Compiler : 18 mois après, le vrai bilan",
-      "IBM Bob GA et Copilot passe au billing token : l'IA dev se recalibrate",
-      "HTTP/3 et server-first : l'architecture web par défaut en 2026",
-      "Post-Omnibus CSRD : la supply chain devient le vrai régulateur ESG",
-      "84 % utilisent l'IA, 29 % font confiance au code livré : le vrai gap"
     ]
   }
 ]

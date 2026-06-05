@@ -1,5 +1,16 @@
 [
   {
+    "edition": 11,
+    "date": "5 juin 2026",
+    "titles": [
+      "CSS-in-JS est mort à l'ère des React Server Components",
+      "Microsoft Build 2026 : Project Polaris coupe le cordon OpenAI",
+      "La CI/CD n'a pas été conçue pour les coding agents",
+      "ESRS 2.0 : la consultation se ferme, l'adoption arrive cet été",
+      "Tailwind est populaire, Tailwind Labs est en faillite : le paradoxe de l'open source à l'ère des LLM"
+    ]
+  },
+  {
     "edition": 10,
     "date": "29 mai 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "WebAssembly dépasse les containers à l'edge : le Component Model comme pivot",
       "EU AI Act pleine application le 2 août : 78 jours pour les systèmes à haut risque",
       "Vibe coding a un problème d'UX — et c'est un danger pour la prod"
-    ]
-  },
-  {
-    "edition": 7,
-    "date": "8 mai 2026",
-    "titles": [
-      "TypeScript 7.0 bêta : le compilateur passe en Go",
-      "Code w/ Claude 2026 : Routines, Managed Agents et compute illimité",
-      "React Foundation : gouvernance neutre sous la Linux Foundation",
-      "Anthropic loue Colossus 1 à SpaceX : 300 MW, bilan carbone ignoré",
-      "\"L'IA accélère le code, pas la livraison\" — le mythe de la vélocité"
     ]
   }
 ]

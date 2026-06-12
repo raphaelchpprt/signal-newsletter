@@ -1,5 +1,16 @@
 [
   {
+    "edition": 12,
+    "date": "12 juin 2026",
+    "titles": [
+      "Cloudflare rachète VoidZero : Vite 8 + Rolldown changent la donne",
+      "Microsoft annule ses licences Claude Code : la tokenomics explose en vol",
+      "Rolldown 1.0 stable : le Rust s'impose comme standard de bundling",
+      "AI Act : le Code of Practice sur le labelling IA publié le 10 juin",
+      "\"L'IA cause-t-elle une répétition de la décennie perdue du frontend ?\""
+    ]
+  },
+  {
     "edition": 11,
     "date": "5 juin 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "MCP s'impose comme le standard de connectivité des agents : 97M de téléchargements mensuels",
       "AI Act Omnibus : accord politique le 7 mai, les délais hauts risques repoussés à décembre 2027",
       "L'UX de Google Antigravity 2.0 : quand l'agent-first détruit la confiance utilisateur"
-    ]
-  },
-  {
-    "edition": 8,
-    "date": "15 mai 2026",
-    "titles": [
-      "Remix 3 bêta : rupture totale avec React, pari sur les standards web",
-      "Claude Code seul au sommet : le stack IA dev se clarifie enfin",
-      "WebAssembly dépasse les containers à l'edge : le Component Model comme pivot",
-      "EU AI Act pleine application le 2 août : 78 jours pour les systèmes à haut risque",
-      "Vibe coding a un problème d'UX — et c'est un danger pour la prod"
     ]
   }
 ]

@@ -1,5 +1,16 @@
 [
   {
+    "edition": 13,
+    "date": "19 juin 2026",
+    "titles": [
+      "React 19.2 : Activity, useEffectEvent et le futur de la navigation",
+      "Grok Build entre dans la bataille des agents de code",
+      "Node.js 24 LTS : TypeScript natif sans build step, enfin",
+      "L'UE publie sa feuille de route IA & énergie : les data centers sous pression",
+      "Le vibe coding produit de la dette technique invisible — et personne ne le mesure"
+    ]
+  },
+  {
     "edition": 12,
     "date": "12 juin 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Google I/O 2026 : WebMCP et Chrome DevTools pour agents redéfinissent le web agentique",
       "Souveraineté numérique EU : le paquet Tech Sovereignty change les règles pour le SaaS",
       "\"L'IA ne va pas accélérer la livraison logicielle — rien ne l'a jamais fait\""
-    ]
-  },
-  {
-    "edition": 9,
-    "date": "22 mai 2026",
-    "titles": [
-      "shadcn/ui + TanStack Start : le duo s'impose comme alternative crédible à Next.js",
-      "Google Antigravity 2.0 : Google entre dans la bataille des agents, par effraction",
-      "MCP s'impose comme le standard de connectivité des agents : 97M de téléchargements mensuels",
-      "AI Act Omnibus : accord politique le 7 mai, les délais hauts risques repoussés à décembre 2027",
-      "L'UX de Google Antigravity 2.0 : quand l'agent-first détruit la confiance utilisateur"
     ]
   }
 ]

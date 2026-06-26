@@ -1,5 +1,16 @@
 [
   {
+    "edition": 14,
+    "date": "26 juin 2026",
+    "titles": [
+      "Next.js 16.3 : les navigations instantanées arrivent enfin",
+      "SpaceX rachète Cursor pour 60 Md$ : l'ère des outils indépendants est terminée",
+      "React Compiler porté en Rust : le toolchain natif devient la norme",
+      "AI Act pleinement applicable le 2 août : le compte à rebours SaaS commence",
+      "\"Ton app IA tourne sur leur cloud — et c'est le vrai problème\""
+    ]
+  },
+  {
     "edition": 13,
     "date": "19 juin 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "La CI/CD n'a pas été conçue pour les coding agents",
       "ESRS 2.0 : la consultation se ferme, l'adoption arrive cet été",
       "Tailwind est populaire, Tailwind Labs est en faillite : le paradoxe de l'open source à l'ère des LLM"
-    ]
-  },
-  {
-    "edition": 10,
-    "date": "29 mai 2026",
-    "titles": [
-      "Storybook intègre TanStack React et l'agentic setup",
-      "Cursor 3.0 vs Claude Code : la guerre des agents éclate",
-      "Google I/O 2026 : WebMCP et Chrome DevTools pour agents redéfinissent le web agentique",
-      "Souveraineté numérique EU : le paquet Tech Sovereignty change les règles pour le SaaS",
-      "\"L'IA ne va pas accélérer la livraison logicielle — rien ne l'a jamais fait\""
     ]
   }
 ]

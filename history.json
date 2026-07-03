@@ -1,5 +1,16 @@
 [
   {
+    "edition": 15,
+    "date": "3 juillet 2026",
+    "titles": [
+      "TypeScript 7 RC : le compilateur Go est dans le mainline",
+      "Claude Sonnet 5 default dans Claude Code, ZCode défie l'Occident",
+      "WebMCP : Google standardise le web agent-ready dans Chrome",
+      "CADA : l'UE transforme la souveraineté cloud en loi contraignante",
+      "\"Ton SaaS sera peut-être invisible aux agents — et tu ne le sauras pas\""
+    ]
+  },
+  {
     "edition": 14,
     "date": "26 juin 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Rolldown 1.0 stable : le Rust s'impose comme standard de bundling",
       "AI Act : le Code of Practice sur le labelling IA publié le 10 juin",
       "\"L'IA cause-t-elle une répétition de la décennie perdue du frontend ?\""
-    ]
-  },
-  {
-    "edition": 11,
-    "date": "5 juin 2026",
-    "titles": [
-      "CSS-in-JS est mort à l'ère des React Server Components",
-      "Microsoft Build 2026 : Project Polaris coupe le cordon OpenAI",
-      "La CI/CD n'a pas été conçue pour les coding agents",
-      "ESRS 2.0 : la consultation se ferme, l'adoption arrive cet été",
-      "Tailwind est populaire, Tailwind Labs est en faillite : le paradoxe de l'open source à l'ère des LLM"
     ]
   }
 ]

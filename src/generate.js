@@ -151,7 +151,7 @@ MISSION : newsletter "Signal", 5 items exactement dans cet ordre :
 5. Opinion/Vision : un article opinioné qui prend position ou challenge un consensus tech/UX/UI/web. Style : "Is Frontend Dead?", best practices remises en question, nouveautés UX/UI analysées de façon critique. Sources : daily.dev, HN (news.ycombinator.com), thenewstack.io, arstechnica.com. Restitue la thèse de l'auteur et ce qu'elle implique pour Raphaël. — tagColor: "opinion"
 
 Pour chaque item :
-1. Recherche web — articles publiés au cours des 7 derniers jours par rapport à aujourd'hui
+1. Recherche web — articles publiés au cours des 7 derniers jours par rapport à aujourd'hui (${frenchDate()})
 2. Résumé 2 paragraphes (\n\n), ton direct, 1-2 phrases/§ max
 
 MISE EN VALEUR (stricte) :

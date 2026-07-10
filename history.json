@@ -1,5 +1,16 @@
 [
   {
+    "edition": 16,
+    "date": "10 juillet 2026",
+    "titles": [
+      "shadcn/ui bascule sur Base UI par défaut",
+      "Claude Code 2.1 : GitHub Vision, sessions nommées et agents background fiabilisés",
+      "LiteRT.js : Google apporte l'inférence IA native au navigateur via WebGPU",
+      "La Commission européenne adopte les ESRS révisés : -61 % de datapoints obligatoires",
+      "GitHub est en train de casser — mais personne ne s'entend sur le remplaçant"
+    ]
+  },
+  {
     "edition": 15,
     "date": "3 juillet 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Node.js 24 LTS : TypeScript natif sans build step, enfin",
       "L'UE publie sa feuille de route IA & énergie : les data centers sous pression",
       "Le vibe coding produit de la dette technique invisible — et personne ne le mesure"
-    ]
-  },
-  {
-    "edition": 12,
-    "date": "12 juin 2026",
-    "titles": [
-      "Cloudflare rachète VoidZero : Vite 8 + Rolldown changent la donne",
-      "Microsoft annule ses licences Claude Code : la tokenomics explose en vol",
-      "Rolldown 1.0 stable : le Rust s'impose comme standard de bundling",
-      "AI Act : le Code of Practice sur le labelling IA publié le 10 juin",
-      "\"L'IA cause-t-elle une répétition de la décennie perdue du frontend ?\""
     ]
   }
 ]

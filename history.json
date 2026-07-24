@@ -1,5 +1,16 @@
 [
   {
+    "edition": 18,
+    "date": "24 juillet 2026",
+    "titles": [
+      "WebStorm 2026.2 : TypeScript 7 natif, Copilot intégré sans plugin",
+      "Claude Code : /code-review en background, MCP live dans les artefacts",
+      "Node.js 24 LTS : TypeScript natif par défaut, le build step est mort",
+      "AI Act GPAI : l'enforcement européen s'active le 2 août, 9 jours",
+      "\"Slopsquatting\" : quand tes agents installent les packages des attaquants"
+    ]
+  },
+  {
     "edition": 17,
     "date": "17 juillet 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "WebMCP : Google standardise le web agent-ready dans Chrome",
       "CADA : l'UE transforme la souveraineté cloud en loi contraignante",
       "\"Ton SaaS sera peut-être invisible aux agents — et tu ne le sauras pas\""
-    ]
-  },
-  {
-    "edition": 14,
-    "date": "26 juin 2026",
-    "titles": [
-      "Next.js 16.3 : les navigations instantanées arrivent enfin",
-      "SpaceX rachète Cursor pour 60 Md$ : l'ère des outils indépendants est terminée",
-      "React Compiler porté en Rust : le toolchain natif devient la norme",
-      "AI Act pleinement applicable le 2 août : le compte à rebours SaaS commence",
-      "\"Ton app IA tourne sur leur cloud — et c'est le vrai problème\""
     ]
   }
 ]

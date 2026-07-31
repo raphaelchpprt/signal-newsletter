@@ -1,5 +1,16 @@
 [
   {
+    "edition": 19,
+    "date": "31 juillet 2026",
+    "titles": [
+      "React Router v8.3 : middleware par défaut, ESM-only, react-router-dom supprimé",
+      "Claude Opus 5 : performances Fable 5 à moitié prix, avec un curseur d'effort",
+      "Bun réécrit de Zig en Rust en 11 jours : 535 K lignes, 64 agents en parallèle",
+      "AI Act 2 août : GPAI sous enforcement réel, chatbots EU sous obligation de transparence",
+      "84 % des devs utilisent l'IA, 29 % lui font confiance : le paradoxe qui redéfinit le métier"
+    ]
+  },
+  {
     "edition": 18,
     "date": "24 juillet 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "LiteRT.js : Google apporte l'inférence IA native au navigateur via WebGPU",
       "La Commission européenne adopte les ESRS révisés : -61 % de datapoints obligatoires",
       "GitHub est en train de casser — mais personne ne s'entend sur le remplaçant"
-    ]
-  },
-  {
-    "edition": 15,
-    "date": "3 juillet 2026",
-    "titles": [
-      "TypeScript 7 RC : le compilateur Go est dans le mainline",
-      "Claude Sonnet 5 default dans Claude Code, ZCode défie l'Occident",
-      "WebMCP : Google standardise le web agent-ready dans Chrome",
-      "CADA : l'UE transforme la souveraineté cloud en loi contraignante",
-      "\"Ton SaaS sera peut-être invisible aux agents — et tu ne le sauras pas\""
     ]
   }
 ]

@@ -1,5 +1,16 @@
 [
   {
+    "edition": 20,
+    "date": "7 août 2026",
+    "titles": [
+      "TypeScript 7 : le compilateur Go passe en GA, l'écosystème split",
+      "Cursor Router : routage intelligent de modèles, –60 % de coût IA",
+      "Le vrai goulot agentic : la vérification, pas le déploiement",
+      "AI Act 2 août : Article 50 et enforcement GPAI activés ce jour",
+      "« L'IA fabrique des devs qui ne savent plus déboguer »"
+    ]
+  },
+  {
     "edition": 19,
     "date": "31 juillet 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "RSC : la surface d'attaque serveur que le frontend sous-estime encore",
       "L'UE publie son plan d'action IA & cybersécurité, 3 semaines avant l'AI Act",
       "\"L'IA n'a pas déplacé le goulot d'étranglement vers la code review\""
-    ]
-  },
-  {
-    "edition": 16,
-    "date": "10 juillet 2026",
-    "titles": [
-      "shadcn/ui bascule sur Base UI par défaut",
-      "Claude Code 2.1 : GitHub Vision, sessions nommées et agents background fiabilisés",
-      "LiteRT.js : Google apporte l'inférence IA native au navigateur via WebGPU",
-      "La Commission européenne adopte les ESRS révisés : -61 % de datapoints obligatoires",
-      "GitHub est en train de casser — mais personne ne s'entend sur le remplaçant"
     ]
   }
 ]

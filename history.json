@@ -1,5 +1,16 @@
 [
   {
+    "edition": 21,
+    "date": "14 août 2026",
+    "titles": [
+      "shadcn/ui : Base UI devient le primitif par défaut",
+      "Cursor 3.11 : side chats et cloud agent hooks pour piloter ses agents",
+      "Cloudflare Workers : Node.js compat activé par défaut depuis le 4 août",
+      "ESMA ESG Ratings : la deadline d'autorisation du 2 août est passée",
+      "« Mon stack 2026 est ennuyeux à mort — c'est le point »"
+    ]
+  },
+  {
     "edition": 20,
     "date": "7 août 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Node.js 24 LTS : TypeScript natif par défaut, le build step est mort",
       "AI Act GPAI : l'enforcement européen s'active le 2 août, 9 jours",
       "\"Slopsquatting\" : quand tes agents installent les packages des attaquants"
-    ]
-  },
-  {
-    "edition": 17,
-    "date": "17 juillet 2026",
-    "titles": [
-      "Next.js lance un programme mensuel de sécurité face à la vague RSC",
-      "VS Code 1.128 : Copilot Vision GA et sessions Claude multi-chat",
-      "RSC : la surface d'attaque serveur que le frontend sous-estime encore",
-      "L'UE publie son plan d'action IA & cybersécurité, 3 semaines avant l'AI Act",
-      "\"L'IA n'a pas déplacé le goulot d'étranglement vers la code review\""
     ]
   }
 ]

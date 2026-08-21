@@ -1,5 +1,16 @@
 [
   {
+    "edition": 22,
+    "date": "vendredi 21 août 2026",
+    "titles": [
+      "React Router v8 : ESM-only, TanStack Router comme challenger sérieux",
+      "SpaceX rachète Cursor pour 60 Md$ : l'outil passe sous SpaceXAI",
+      "Remix 3 beta : full-stack sans React, sur primitives web natives",
+      "ESRS simplifié adopté : −60 % de datapoints, scrutin parlementaire jusqu'en novembre",
+      "« Le vibe slop est le symptôme. La dette de contexte est la maladie. »"
+    ]
+  },
+  {
     "edition": 21,
     "date": "14 août 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Bun réécrit de Zig en Rust en 11 jours : 535 K lignes, 64 agents en parallèle",
       "AI Act 2 août : GPAI sous enforcement réel, chatbots EU sous obligation de transparence",
       "84 % des devs utilisent l'IA, 29 % lui font confiance : le paradoxe qui redéfinit le métier"
-    ]
-  },
-  {
-    "edition": 18,
-    "date": "24 juillet 2026",
-    "titles": [
-      "WebStorm 2026.2 : TypeScript 7 natif, Copilot intégré sans plugin",
-      "Claude Code : /code-review en background, MCP live dans les artefacts",
-      "Node.js 24 LTS : TypeScript natif par défaut, le build step est mort",
-      "AI Act GPAI : l'enforcement européen s'active le 2 août, 9 jours",
-      "\"Slopsquatting\" : quand tes agents installent les packages des attaquants"
     ]
   }
 ]

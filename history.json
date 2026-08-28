@@ -1,5 +1,16 @@
 [
   {
+    "edition": 23,
+    "date": "28 août 2026",
+    "titles": [
+      "Next.js 16.3.3 : deux failles critiques, patch d'urgence avancé",
+      "Claude Sonnet 5 à $2/$10 pour toujours : la course aux prix s'accélère",
+      "MCP 2026-07-28 stateless : le protocole agent devient une API REST",
+      "EUDR : la Commission publie sa FAQ mise à jour le 21 août, deadline maintenue",
+      "« Le marché de l'IA coding devait converger. C'est l'inverse qui s'est passé »"
+    ]
+  },
+  {
     "edition": 22,
     "date": "vendredi 21 août 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Le vrai goulot agentic : la vérification, pas le déploiement",
       "AI Act 2 août : Article 50 et enforcement GPAI activés ce jour",
       "« L'IA fabrique des devs qui ne savent plus déboguer »"
-    ]
-  },
-  {
-    "edition": 19,
-    "date": "31 juillet 2026",
-    "titles": [
-      "React Router v8.3 : middleware par défaut, ESM-only, react-router-dom supprimé",
-      "Claude Opus 5 : performances Fable 5 à moitié prix, avec un curseur d'effort",
-      "Bun réécrit de Zig en Rust en 11 jours : 535 K lignes, 64 agents en parallèle",
-      "AI Act 2 août : GPAI sous enforcement réel, chatbots EU sous obligation de transparence",
-      "84 % des devs utilisent l'IA, 29 % lui font confiance : le paradoxe qui redéfinit le métier"
     ]
   }
 ]

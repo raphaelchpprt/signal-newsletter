@@ -1,5 +1,16 @@
 [
   {
+    "edition": 24,
+    "date": "4 septembre 2026",
+    "titles": [
+      "pnpm 12 : réécriture complète en Rust, Zod 4.5 en prime",
+      "Claude Fable 5.1 débarque dans GitHub Copilot",
+      "React Compiler via Oxc dans Vite : 12x plus rapide que Babel",
+      "AI Act : premiers audits GPAI actifs, deadline systemic risk le 15 septembre",
+      "« Le CSS-in-JS est mort. Vive le CSS-in-JS. »"
+    ]
+  },
+  {
     "edition": 23,
     "date": "28 août 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Cloudflare Workers : Node.js compat activé par défaut depuis le 4 août",
       "ESMA ESG Ratings : la deadline d'autorisation du 2 août est passée",
       "« Mon stack 2026 est ennuyeux à mort — c'est le point »"
-    ]
-  },
-  {
-    "edition": 20,
-    "date": "7 août 2026",
-    "titles": [
-      "TypeScript 7 : le compilateur Go passe en GA, l'écosystème split",
-      "Cursor Router : routage intelligent de modèles, –60 % de coût IA",
-      "Le vrai goulot agentic : la vérification, pas le déploiement",
-      "AI Act 2 août : Article 50 et enforcement GPAI activés ce jour",
-      "« L'IA fabrique des devs qui ne savent plus déboguer »"
     ]
   }
 ]

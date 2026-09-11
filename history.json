@@ -1,5 +1,16 @@
 [
   {
+    "edition": 25,
+    "date": "11 septembre 2026",
+    "titles": [
+      "React 19.3 : View Transitions et Fragment Refs passent en stable",
+      "Claude Code : plugins hot-reload, sub-agents et hooks TypeScript en preview",
+      "TypeScript 7.0 GA : compilateur Go natif, 10x plus rapide, mais API programmatique absente",
+      "Enforcement actif : audits EU AI Act et directive anti-greenwashing simultanés en septembre",
+      "« L'IA n'a pas simplifié l'ingénierie logicielle. Elle a rendu les parties difficiles encore plus dures. »"
+    ]
+  },
+  {
     "edition": 24,
     "date": "4 septembre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Remix 3 beta : full-stack sans React, sur primitives web natives",
       "ESRS simplifié adopté : −60 % de datapoints, scrutin parlementaire jusqu'en novembre",
       "« Le vibe slop est le symptôme. La dette de contexte est la maladie. »"
-    ]
-  },
-  {
-    "edition": 21,
-    "date": "14 août 2026",
-    "titles": [
-      "shadcn/ui : Base UI devient le primitif par défaut",
-      "Cursor 3.11 : side chats et cloud agent hooks pour piloter ses agents",
-      "Cloudflare Workers : Node.js compat activé par défaut depuis le 4 août",
-      "ESMA ESG Ratings : la deadline d'autorisation du 2 août est passée",
-      "« Mon stack 2026 est ennuyeux à mort — c'est le point »"
     ]
   }
 ]

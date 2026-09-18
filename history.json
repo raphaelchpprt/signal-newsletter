@@ -1,5 +1,16 @@
 [
   {
+    "edition": 26,
+    "date": "18 septembre 2026",
+    "titles": [
+      "Shopify quitte React Native pour Swift et Kotlin",
+      "Claude Fable 5.1 : cache −75 %, Claude Code devient #1",
+      "Bun 1.4 réécrit en Rust : headless browser, HTTP/2 natif",
+      "EU AI Act : enforcement GPAI actif, high-risk repoussé à 2027",
+      "« Dupliquer la logique n'est plus douloureux. Les abstractions le sont toujours. »"
+    ]
+  },
+  {
     "edition": 25,
     "date": "11 septembre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "MCP 2026-07-28 stateless : le protocole agent devient une API REST",
       "EUDR : la Commission publie sa FAQ mise à jour le 21 août, deadline maintenue",
       "« Le marché de l'IA coding devait converger. C'est l'inverse qui s'est passé »"
-    ]
-  },
-  {
-    "edition": 22,
-    "date": "vendredi 21 août 2026",
-    "titles": [
-      "React Router v8 : ESM-only, TanStack Router comme challenger sérieux",
-      "SpaceX rachète Cursor pour 60 Md$ : l'outil passe sous SpaceXAI",
-      "Remix 3 beta : full-stack sans React, sur primitives web natives",
-      "ESRS simplifié adopté : −60 % de datapoints, scrutin parlementaire jusqu'en novembre",
-      "« Le vibe slop est le symptôme. La dette de contexte est la maladie. »"
     ]
   }
 ]

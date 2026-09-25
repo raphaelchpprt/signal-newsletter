@@ -1,5 +1,16 @@
 [
   {
+    "edition": 27,
+    "date": "25 septembre 2026",
+    "titles": [
+      "shadcn/ui : Base UI remplace Radix comme défaut pour les nouveaux projets",
+      "GitHub Copilot HydraFusion : orchestration multi-modèles en preview",
+      "GitHub : 2,9 milliards de commits/mois — la vérification décroche",
+      "ESRS simplifiés publiés au Journal Officiel : moins 61 % de datapoints",
+      "« L'IA a cassé la code review. Personne ne s'y attendait. »"
+    ]
+  },
+  {
     "edition": 26,
     "date": "18 septembre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "React Compiler via Oxc dans Vite : 12x plus rapide que Babel",
       "AI Act : premiers audits GPAI actifs, deadline systemic risk le 15 septembre",
       "« Le CSS-in-JS est mort. Vive le CSS-in-JS. »"
-    ]
-  },
-  {
-    "edition": 23,
-    "date": "28 août 2026",
-    "titles": [
-      "Next.js 16.3.3 : deux failles critiques, patch d'urgence avancé",
-      "Claude Sonnet 5 à $2/$10 pour toujours : la course aux prix s'accélère",
-      "MCP 2026-07-28 stateless : le protocole agent devient une API REST",
-      "EUDR : la Commission publie sa FAQ mise à jour le 21 août, deadline maintenue",
-      "« Le marché de l'IA coding devait converger. C'est l'inverse qui s'est passé »"
     ]
   }
 ]

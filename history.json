@@ -1,5 +1,16 @@
 [
   {
+    "edition": 28,
+    "date": "2 octobre 2026",
+    "titles": [
+      "Remix 3 RC : adieu React, bonjour web standards natifs",
+      "Claude Code Mods : personnaliser l'agent en TypeScript pur",
+      "Deno 2.9 : desktop natif et cold start divisé par 2",
+      "CADA : l'UE pose les bases de sa souveraineté cloud et IA",
+      "Le vibe coding a gagné la guerre de l'adoption. Il est en train de perdre la guerre de la qualité."
+    ]
+  },
+  {
     "edition": 27,
     "date": "25 septembre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "TypeScript 7.0 GA : compilateur Go natif, 10x plus rapide, mais API programmatique absente",
       "Enforcement actif : audits EU AI Act et directive anti-greenwashing simultanés en septembre",
       "« L'IA n'a pas simplifié l'ingénierie logicielle. Elle a rendu les parties difficiles encore plus dures. »"
-    ]
-  },
-  {
-    "edition": 24,
-    "date": "4 septembre 2026",
-    "titles": [
-      "pnpm 12 : réécriture complète en Rust, Zod 4.5 en prime",
-      "Claude Fable 5.1 débarque dans GitHub Copilot",
-      "React Compiler via Oxc dans Vite : 12x plus rapide que Babel",
-      "AI Act : premiers audits GPAI actifs, deadline systemic risk le 15 septembre",
-      "« Le CSS-in-JS est mort. Vive le CSS-in-JS. »"
     ]
   }
 ]

@@ -1,5 +1,16 @@
 [
   {
+    "edition": 29,
+    "date": "9 octobre 2026",
+    "titles": [
+      "shadcn/ui franchit les 57 M de téléchargements mensuels",
+      "Claude Sonnet 5.5 devient le modèle Sonnet par défaut dans Claude Code",
+      "Node.js 26 entre en LTS le 28 octobre : ce qui change en prod",
+      "EU AI Act + directive anti-greenwashing : double enforcement actif en octobre",
+      "« L'astéroïde frappe le front-end » : Nolan Lawson diagnostique une obsolescence accélérée"
+    ]
+  },
+  {
     "edition": 28,
     "date": "2 octobre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Bun 1.4 réécrit en Rust : headless browser, HTTP/2 natif",
       "EU AI Act : enforcement GPAI actif, high-risk repoussé à 2027",
       "« Dupliquer la logique n'est plus douloureux. Les abstractions le sont toujours. »"
-    ]
-  },
-  {
-    "edition": 25,
-    "date": "11 septembre 2026",
-    "titles": [
-      "React 19.3 : View Transitions et Fragment Refs passent en stable",
-      "Claude Code : plugins hot-reload, sub-agents et hooks TypeScript en preview",
-      "TypeScript 7.0 GA : compilateur Go natif, 10x plus rapide, mais API programmatique absente",
-      "Enforcement actif : audits EU AI Act et directive anti-greenwashing simultanés en septembre",
-      "« L'IA n'a pas simplifié l'ingénierie logicielle. Elle a rendu les parties difficiles encore plus dures. »"
     ]
   }
 ]

@@ -1,5 +1,16 @@
 [
   {
+    "edition": 30,
+    "date": "16 octobre 2026",
+    "titles": [
+      "TanStack Start 1.0 stable : le challenger fullstack React est prêt",
+      "Stack Overflow Survey 2026 : Claude Code #1, le modèle prime sur l'outil",
+      "ViteConf 2026 : l'ère agentique redéfinit le tooling frontend",
+      "EU AI Act : les premières amendes GPAI arrivent, le high-risk repoussé à 2027",
+      "Next.js a gagné. Mais la satisfaction s'effondre — et TanStack Start prouve pourquoi"
+    ]
+  },
+  {
     "edition": 29,
     "date": "9 octobre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "GitHub : 2,9 milliards de commits/mois — la vérification décroche",
       "ESRS simplifiés publiés au Journal Officiel : moins 61 % de datapoints",
       "« L'IA a cassé la code review. Personne ne s'y attendait. »"
-    ]
-  },
-  {
-    "edition": 26,
-    "date": "18 septembre 2026",
-    "titles": [
-      "Shopify quitte React Native pour Swift et Kotlin",
-      "Claude Fable 5.1 : cache −75 %, Claude Code devient #1",
-      "Bun 1.4 réécrit en Rust : headless browser, HTTP/2 natif",
-      "EU AI Act : enforcement GPAI actif, high-risk repoussé à 2027",
-      "« Dupliquer la logique n'est plus douloureux. Les abstractions le sont toujours. »"
     ]
   }
 ]

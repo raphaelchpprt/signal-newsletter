@@ -1,5 +1,16 @@
 [
   {
+    "edition": 31,
+    "date": "23 octobre 2026",
+    "titles": [
+      "React Native 0.87 : TypeScript strict par défaut, Metro accéléré",
+      "Anthropic remplace Git par Scion : **30 000 merges/jour**, Claude a cassé le versioning",
+      "Bun 1.4.3 : type-check TypeScript intégré, **6,4x plus rapide que tsc**",
+      "CSRD Omnibus : **80 % d'entreprises exclues**, 2026 devient une année de préparation",
+      "« Le problème Midas de l'IA : quand le code est gratuit, les features ne valent plus rien »"
+    ]
+  },
+  {
     "edition": 30,
     "date": "16 octobre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Deno 2.9 : desktop natif et cold start divisé par 2",
       "CADA : l'UE pose les bases de sa souveraineté cloud et IA",
       "Le vibe coding a gagné la guerre de l'adoption. Il est en train de perdre la guerre de la qualité."
-    ]
-  },
-  {
-    "edition": 27,
-    "date": "25 septembre 2026",
-    "titles": [
-      "shadcn/ui : Base UI remplace Radix comme défaut pour les nouveaux projets",
-      "GitHub Copilot HydraFusion : orchestration multi-modèles en preview",
-      "GitHub : 2,9 milliards de commits/mois — la vérification décroche",
-      "ESRS simplifiés publiés au Journal Officiel : moins 61 % de datapoints",
-      "« L'IA a cassé la code review. Personne ne s'y attendait. »"
     ]
   }
 ]

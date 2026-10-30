@@ -1,5 +1,16 @@
 [
   {
+    "edition": 32,
+    "date": "30 octobre 2026",
+    "titles": [
+      "Next.js 16.4 : Cache Components par défaut, Turbopack allégé",
+      "Claude Code Review en GA : **54 % de PRs commentées**, l'IA entre dans la boucle qualité",
+      "Vite+ 1.0 stable : Cloudflare unifie le toolchain JS en un seul binaire",
+      "Digital Omnibus & IA : l'UE avance sur deux fronts, sans filet de responsabilité",
+      "« L'IA n'a pas tué le dev web — elle a tué la version facile »"
+    ]
+  },
+  {
     "edition": 31,
     "date": "23 octobre 2026",
     "titles": [
@@ -30,17 +41,6 @@
       "Node.js 26 entre en LTS le 28 octobre : ce qui change en prod",
       "EU AI Act + directive anti-greenwashing : double enforcement actif en octobre",
       "« L'astéroïde frappe le front-end » : Nolan Lawson diagnostique une obsolescence accélérée"
-    ]
-  },
-  {
-    "edition": 28,
-    "date": "2 octobre 2026",
-    "titles": [
-      "Remix 3 RC : adieu React, bonjour web standards natifs",
-      "Claude Code Mods : personnaliser l'agent en TypeScript pur",
-      "Deno 2.9 : desktop natif et cold start divisé par 2",
-      "CADA : l'UE pose les bases de sa souveraineté cloud et IA",
-      "Le vibe coding a gagné la guerre de l'adoption. Il est en train de perdre la guerre de la qualité."
     ]
   }
 ]
